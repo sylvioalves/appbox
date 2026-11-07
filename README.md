@@ -66,7 +66,14 @@ It installs the sources under `/usr/lib/appbox`, a launcher at
 metainfo, all named after the app id `io.github.sylvioalves.appbox`,
 and depends on `electron44`.
 Each release on GitHub also carries this package, built by the
-release workflow, for `sudo pacman -U`.
+release workflow. The package is not signed, so download it first and
+install the local file, since `pacman -U` with a URL asks for a
+signature:
+
+```
+curl -LO https://github.com/sylvioalves/appbox/releases/download/v<version>/<package file>
+sudo pacman -U ./<package file>
+```
 
 ### From a checkout
 
