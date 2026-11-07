@@ -22,7 +22,7 @@ for f in $(find src bin scripts test -name '*.js' | sort); do
 done
 if [ -z "$bad" ]; then pass "syntax"; else fail "syntax:$bad"; fi
 
-out=$(node --test test/ 2>&1)
+out=$(node --test test/*.test.js 2>&1)
 if [ $? -eq 0 ]; then
   pass "tests ($(printf '%s\n' "$out" | sed -n 's/^.* pass \([0-9]*\)$/\1/p' | head -n 1) passed)"
 else

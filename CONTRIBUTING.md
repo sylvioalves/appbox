@@ -40,7 +40,7 @@ Then run the app and exercise the part you changed.
 ## Tests
 
 Tests live in `test/<module>.test.js` and use `node:test` with
-`node:assert/strict`, so `node --test test/` runs them without
+`node:assert/strict`, so `node --test test/*.test.js` runs them without
 Electron. They cover the modules that load without Electron: the
 parsers in `src/mail`, the configuration, the catalog and the
 profile. To add one, create or extend the file named after the
