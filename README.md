@@ -65,6 +65,8 @@ It installs the sources under `/usr/lib/appbox`, a launcher at
 `/usr/bin/appbox`, the desktop entry, the icons and the AppStream
 metainfo, all named after the app id `io.github.sylvioalves.appbox`,
 and depends on `electron44`.
+Each release on GitHub also carries this package, built by the
+release workflow, for `sudo pacman -U`.
 
 ### From a checkout
 
