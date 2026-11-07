@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>Settings</title>
+  <link rel="stylesheet" href="../dialog.css">
+</head>
+<body>
+  <header id="titlebar">
+    <span id="title">Settings</span>
+    <span class="spacer" id="version"></span>
+  </header>
+  <main>
+    <div class="group">
+      <label class="row switch-row">
+        <span class="lbl">Start at login</span>
+        <input type="checkbox" id="autostart"><span class="switch"></span>
+      </label>
+      <label class="row switch-row">
+        <span class="lbl">Show icon in the system tray</span>
+        <input type="checkbox" id="showTray"><span class="switch"></span>
+      </label>
+      <label class="row switch-row">
+        <span class="lbl">Start hidden (minimized without the tray icon)</span>
+        <input type="checkbox" id="startHidden"><span class="switch"></span>
+      </label>
+      <label class="row switch-row">
+        <span class="lbl">Use site icons when no icon is set</span>
+        <input type="checkbox" id="useFavicons"><span class="switch"></span>
+      </label>
+      <label class="row switch-row">
+        <span class="lbl">Hardware acceleration (applies after restart)</span>
+        <input type="checkbox" id="hardwareAcceleration"><span class="switch"></span>
+      </label>
+    </div>
+
+    <label class="row">
+      <span class="lbl">Theme</span>
+      <select id="theme">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="system">Follow the system</option>
+      </select>
+    </label>
+    <label class="row">
+      <span class="lbl">Download folder</span>
+      <input type="text" id="downloadDir" spellcheck="false">
+      <button class="btn small" id="browse">Browse</button>
+    </label>
+    <label class="row">
+      <span class="lbl">Spellcheck languages</span>
+      <input type="text" id="spellcheck" placeholder="en-US, pt-BR" spellcheck="false">
+    </label>
+    <label class="row top">
+      <span class="lbl">Sign-in hosts</span>
+      <textarea id="authHosts" rows="5" spellcheck="false"></textarea>
+    </label>
+    <p class="hint">One host per line, <code>*.example.com</code> for subdomains. These load inside any
+      app during sign-in. Add your company sign-in page here when an app opens it in the browser.</p>
+
+    <div class="group actions">
+      <button class="btn" id="export">Export profile...</button>
+      <button class="btn" id="import">Import profile...</button>
+      <button class="btn" id="editor">Open services.json in an editor</button>
+      <button class="btn" id="reload">Reload configuration</button>
+    </div>
+    <p class="hint">Apps and their properties are edited from the sidebar: right-click an app and choose Properties.</p>
+
+    <p class="error" id="error" hidden></p>
+  </main>
+  <footer>
+    <button id="cancel" class="btn">Cancel</button>
+    <button id="save" class="btn primary">Save</button>
+  </footer>
+  <script src="settings.js"></script>
+</body>
+</html>

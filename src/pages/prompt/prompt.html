@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>Passphrase</title>
+  <link rel="stylesheet" href="../dialog.css">
+</head>
+<body>
+  <header id="titlebar">
+    <span id="title">Passphrase</span>
+  </header>
+  <main>
+    <p class="hint" id="message"></p>
+    <label class="row">
+      <span class="lbl">Passphrase</span>
+      <input type="password" id="pass" autocomplete="off" spellcheck="false">
+    </label>
+    <label class="row" id="repeat-row">
+      <span class="lbl">Repeat</span>
+      <input type="password" id="repeat" autocomplete="off" spellcheck="false">
+    </label>
+    <p class="error" id="error" hidden></p>
+  </main>
+  <footer>
+    <button id="cancel" class="btn">Cancel</button>
+    <button id="ok" class="btn primary">OK</button>
+  </footer>
+  <script src="prompt.js"></script>
+</body>
+</html>

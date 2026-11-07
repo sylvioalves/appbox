@@ -1,0 +1,220 @@
+{
+  "templates": [
+    {
+      "id": "teams",
+      "name": "Teams",
+      "description": "Microsoft Teams chat, calls and meetings",
+      "url": "https://teams.cloud.microsoft/",
+      "color": "#5b5fc7",
+      "icon": "teams.svg",
+      "hosts": [
+        "teams.microsoft.com",
+        "*.teams.microsoft.com",
+        "teams.cloud.microsoft",
+        "*.cloud.microsoft",
+        "*.office.com",
+        "*.office.net",
+        "*.sharepoint.com",
+        "*.microsoft.com",
+        "*.live.com",
+        "*.msauth.net",
+        "*.msftauth.net"
+      ],
+      "permissions": [
+        "notifications",
+        "media",
+        "display-capture",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen",
+        "speaker-selection",
+        "idle-detection"
+      ],
+      "links": "window"
+    },
+    {
+      "id": "outlook",
+      "name": "Outlook",
+      "description": "Outlook on the web: mail and calendar",
+      "url": "https://outlook.office.com/mail/",
+      "color": "#0f6cbd",
+      "icon": "outlook.svg",
+      "hosts": [
+        "outlook.office.com",
+        "outlook.office365.com",
+        "outlook.live.com",
+        "outlook.cloud.microsoft",
+        "*.cloud.microsoft",
+        "*.office.com",
+        "*.office.net",
+        "*.microsoft.com",
+        "*.sharepoint.com",
+        "*.live.com",
+        "*.msauth.net",
+        "*.msftauth.net"
+      ],
+      "permissions": [
+        "notifications",
+        "clipboard-read",
+        "clipboard-sanitized-write"
+      ]
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "description": "Built-in mail client over IMAP, signs in with an app password",
+      "type": "gmail",
+      "url": "https://mail.google.com/mail/u/0/",
+      "color": "#ea4335",
+      "icon": "gmail.svg"
+    },
+    {
+      "id": "whatsapp",
+      "name": "WhatsApp",
+      "description": "WhatsApp Web, linked to the phone",
+      "url": "https://web.whatsapp.com/",
+      "color": "#25d366",
+      "icon": "whatsapp.svg",
+      "hosts": [
+        "web.whatsapp.com",
+        "*.whatsapp.com",
+        "*.whatsapp.net"
+      ],
+      "permissions": [
+        "notifications",
+        "media",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen"
+      ]
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "description": "Telegram Web",
+      "url": "https://web.telegram.org/a/",
+      "color": "#2aabee",
+      "hosts": [
+        "web.telegram.org",
+        "*.telegram.org"
+      ],
+      "permissions": [
+        "notifications",
+        "media",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen"
+      ]
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "description": "Discord servers and direct messages",
+      "url": "https://discord.com/app",
+      "color": "#5865f2",
+      "icon": "discord.svg",
+      "hosts": [
+        "discord.com",
+        "*.discord.com",
+        "*.discordapp.com",
+        "*.discordapp.net",
+        "*.discord.gg",
+        "*.discord.media"
+      ],
+      "permissions": [
+        "notifications",
+        "media",
+        "display-capture",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen"
+      ],
+      "links": "window"
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "description": "Slack workspaces",
+      "url": "https://app.slack.com/",
+      "color": "#4a154b",
+      "hosts": [
+        "app.slack.com",
+        "slack.com",
+        "*.slack.com",
+        "*.slack-edge.com",
+        "*.slack-imgs.com"
+      ],
+      "permissions": [
+        "notifications",
+        "media",
+        "display-capture",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen"
+      ],
+      "links": "window"
+    },
+    {
+      "id": "element",
+      "name": "Element",
+      "description": "Element for Matrix",
+      "url": "https://app.element.io/",
+      "color": "#0dbd8b",
+      "hosts": [
+        "app.element.io",
+        "*.element.io"
+      ],
+      "permissions": [
+        "notifications",
+        "media",
+        "display-capture",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen"
+      ]
+    },
+    {
+      "id": "mattermost",
+      "name": "Mattermost",
+      "description": "A Mattermost server of your choice",
+      "inputs": [{ "key": "url", "label": "Server address", "placeholder": "https://chat.example.com/" }],
+      "color": "#1c58d9",
+      "icon": "mattermost.svg",
+      "permissions": [
+        "notifications",
+        "media",
+        "display-capture",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen"
+      ],
+      "links": "window"
+    },
+    {
+      "id": "gh-tracker",
+      "name": "GH Tracker",
+      "description": "Pull requests you author, review or are assigned to in repositories of your choice, through the GitHub API",
+      "inputs": [
+        { "key": "username", "label": "GitHub user", "placeholder": "login name" },
+        { "key": "repos", "label": "Repositories", "placeholder": "owner/name, owner/name" }
+      ],
+      "type": "github-tracker",
+      "url": "https://github.com/",
+      "color": "#2da44e",
+      "icon": "gh-tracker.svg"
+    },
+    {
+      "id": "custom",
+      "name": "Custom app",
+      "description": "Any web app by address",
+      "inputs": [{ "key": "url", "label": "Address", "placeholder": "https://app.example.com/" }],
+      "color": "#6c7086",
+      "permissions": [
+        "notifications",
+        "clipboard-read",
+        "clipboard-sanitized-write",
+        "fullscreen"
+      ]
+    }
+  ]
+}

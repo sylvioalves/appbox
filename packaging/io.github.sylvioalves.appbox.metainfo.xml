@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.sylvioalves.appbox</id>
+  <name>Appbox</name>
+  <summary>Web app manager with one isolated session per app</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer id="io.github.sylvioalves">
+    <name>Sylvio Alves</name>
+  </developer>
+  <url type="homepage">https://github.com/sylvioalves/appbox</url>
+  <description>
+    <p>
+      Appbox keeps your web apps in one window, each in its own isolated
+      session, with a sidebar to switch between them. Cookies, storage and
+      logins never mix, so two accounts of the same service can live side
+      by side.
+    </p>
+    <p>
+      It ships a built-in Gmail client that talks IMAP directly, since
+      Google does not allow its web interface inside embedded browsers,
+      and a GitHub tracker that lists the pull requests waiting on you.
+    </p>
+    <p>
+      Appbox runs on the system Electron package, so where the
+      distribution packages Electron the Chromium security updates come
+      from the distribution rather than from a bundled runtime.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.sylvioalves.appbox.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>The main window with apps in the sidebar</caption>
+      <image>https://raw.githubusercontent.com/sylvioalves/appbox/main/docs/screenshot-main.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>The catalog of apps to add</caption>
+      <image>https://raw.githubusercontent.com/sylvioalves/appbox/main/docs/screenshot-add.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.0.0" date="2026-11-07"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

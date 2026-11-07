@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Appbox
+Comment=Web app manager
+Exec=appbox
+Icon=io.github.sylvioalves.appbox
+Terminal=false
+Categories=Network;InstantMessaging;Email;
+StartupWMClass=io.github.sylvioalves.appbox

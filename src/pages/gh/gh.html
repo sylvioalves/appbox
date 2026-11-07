@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>GitHub tracker</title>
+  <link rel="stylesheet" href="gh.css">
+</head>
+<body>
+  <div id="app">
+    <header id="top">
+      <span id="brand">GitHub</span>
+      <span id="who"></span>
+      <div id="search-box">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input id="search" placeholder="Filter by title, author, repo or number" spellcheck="false">
+        <button type="button" class="tool small" id="search-clear" title="Clear" hidden>
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <span class="spacer"></span>
+      <label class="switch"><input type="checkbox" id="f-hide-drafts"><span>Hide drafts</span></label>
+      <button class="tool" id="read-all" title="Mark all as read">
+        <svg viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/></svg>
+      </button>
+      <button class="tool" id="refresh" title="Refresh">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      </button>
+      <button class="tool" id="open-site" title="Open your pull requests on GitHub">
+        <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+      </button>
+      <button class="tool" id="signout" title="Forget the token">
+        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L17.17 10H8v2h9.17l-1.58 1.58L17 15l4-4-4-4zM5 5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7v-2H5V5z"/></svg>
+      </button>
+    </header>
+    <div id="panes">
+      <nav id="nav" aria-label="Lists"></nav>
+      <div id="splitter" title="Drag to resize"></div>
+      <main id="main">
+        <div id="list-bar">
+          <span id="caption"></span>
+          <span class="spacer"></span>
+          <span id="status"></span>
+        </div>
+        <div id="exclude-bar">
+          <span class="label">Hide titles containing</span>
+          <span id="exclude-list"></span>
+          <input id="exclude-input" placeholder="add keyword, Enter" spellcheck="false">
+        </div>
+        <div id="list"></div>
+        <div id="empty" hidden>Nothing here.</div>
+      </main>
+    </div>
+  </div>
+  <section id="setup" hidden>
+    <div class="card">
+      <h1>Sign in to GitHub</h1>
+      <p>This view lists the pull requests tied to <b id="setup-user"></b> in <span id="setup-repos"></span>,
+        through the GitHub API. Create a <a href="#" id="token-link">personal access token</a>
+        with read access to pull requests and metadata on those repositories (a classic token
+        needs the <b>repo</b> scope, or <b>public_repo</b> for public repositories only), then
+        paste it here. The token is stored encrypted in your keyring.</p>
+      <label>Token<input type="password" id="token" autocomplete="off" spellcheck="false" placeholder="github_pat_..."></label>
+      <p class="error" id="setup-error" hidden></p>
+      <p class="warn" id="keyring-warn" hidden>No desktop keyring found: the token cannot be stored securely on this machine.</p>
+      <button id="signin-btn" class="btn primary">Sign in</button>
+    </div>
+  </section>
+  <div id="toast" hidden></div>
+  <script src="gh.js"></script>
+</body>
+</html>

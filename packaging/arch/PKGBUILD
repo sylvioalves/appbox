@@ -1,0 +1,48 @@
+# Builds Appbox from the local repository as a system package.
+# Usage: cd packaging/arch && makepkg -f && sudo pacman -U appbox-*.pkg.tar.zst
+
+pkgname=appbox
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Web app manager: one window, one isolated session per service'
+arch=('any')
+url='https://github.com/sylvioalves/appbox'
+license=('MIT')
+depends=('electron44')
+makedepends=('git')
+source=("appbox::git+file://$(realpath "$startdir/../..")")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd appbox
+  git describe --long --tags --abbrev=7 | sed 's/^v//;s/-\([0-9]*\)-g/.r\1.g/'
+}
+
+package() {
+  cd appbox
+  local lib="$pkgdir/usr/lib/appbox"
+
+  install -d "$lib"
+  install -m644 package.json LICENSE README.md "$lib/"
+  cp -r --no-preserve=ownership,mode src assets "$lib/"
+  find "$lib/src" "$lib/assets" -type d -exec chmod 755 {} + -o -type f -exec chmod 644 {} +
+  ln -s /usr/lib/electron44/electron "$lib/appbox"
+
+  install -d "$pkgdir/usr/bin"
+  cat > "$pkgdir/usr/bin/appbox" <<'EOF'
+#!/bin/sh
+unset ELECTRON_RUN_AS_NODE NODE_OPTIONS NODE_EXTRA_CA_CERTS
+: "${ELECTRON_IS_DEV:=0}"; export ELECTRON_IS_DEV
+: "${ELECTRON_FORCE_IS_PACKAGED:=true}"; export ELECTRON_FORCE_IS_PACKAGED
+APPBOX_LAUNCHER=/usr/bin/appbox; export APPBOX_LAUNCHER
+exec /usr/lib/appbox/appbox /usr/lib/appbox "$@"
+EOF
+  chmod 755 "$pkgdir/usr/bin/appbox"
+
+  local id=io.github.sylvioalves.appbox
+  install -Dm644 "packaging/$id.desktop" "$pkgdir/usr/share/applications/$id.desktop"
+  install -Dm644 "packaging/$id.metainfo.xml" "$pkgdir/usr/share/metainfo/$id.metainfo.xml"
+  install -Dm644 assets/appbox.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/$id.svg"
+  install -Dm644 assets/appbox.png "$pkgdir/usr/share/icons/hicolor/256x256/apps/$id.png"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

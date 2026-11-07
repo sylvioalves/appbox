@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-wulLkro1fXKcB5UjbZOlHQa7SRqGmoFO6GIfgBTeYt8='; img-src 'self' data: https:; frame-src about:;">
+  <title>Mail</title>
+  <link rel="stylesheet" href="mail.css">
+</head>
+<body>
+  <section id="signin" hidden>
+    <div class="card">
+      <h1>Sign in to Gmail</h1>
+      <p>Appbox talks to Gmail over IMAP with an <b>app password</b>. Create one at
+        <a href="#" id="app-pw-link">myaccount.google.com/apppasswords</a>
+        (requires 2-Step Verification), then paste it here. The password is stored encrypted in your keyring.</p>
+      <label>Email<input type="email" id="user" autocomplete="username" spellcheck="false"></label>
+      <label>App password<input type="password" id="pass" autocomplete="current-password" placeholder="xxxx xxxx xxxx xxxx"></label>
+      <p class="error" id="signin-error" hidden></p>
+      <p class="warn" id="keyring-warn" hidden>No desktop keyring found: the password cannot be stored securely on this machine.</p>
+      <button id="signin-btn" class="btn primary">Sign in</button>
+    </div>
+  </section>
+
+  <section id="app" hidden>
+    <header id="bar">
+      <span id="account"></span>
+      <span id="state" class="state"></span>
+      <form id="search-form" autocomplete="off">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="search" id="search" placeholder="Search mail" spellcheck="false">
+        <button type="button" class="tool small" id="search-clear" title="Clear search" hidden>
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </form>
+      <span class="spacer"></span>
+      <button class="tool" id="open-gmail" title="Open Gmail in the browser">
+        <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+      </button>
+      <button class="tool" id="signout" title="Sign out">
+        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8v-2H4V5z"/></svg>
+      </button>
+    </header>
+    <div id="panes">
+      <div id="nav">
+        <button id="compose" class="compose-btn">
+          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          New email
+        </button>
+        <nav id="folders" aria-label="Folders"></nav>
+      </div>
+      <div id="folder-menu" class="menu" hidden>
+        <button class="menu-item" id="folder-menu-read">Mark all as read</button>
+        <button class="menu-item" id="folder-menu-pin">Pin to top</button>
+      </div>
+      <div id="splitter" title="Drag to resize"></div>
+      <main id="main">
+        <section id="list-view">
+          <div id="list-bar">
+            <label class="check" title="Select all"><input type="checkbox" id="select-all"><span></span></label>
+            <button class="tool" id="refresh" title="Refresh">
+              <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            </button>
+            <span id="bulk" hidden>
+              <button class="tool" id="bulk-archive" title="Archive">
+                <svg viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68A1.45 1.45 0 0 0 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+              </button>
+              <button class="tool" id="bulk-trash" title="Delete">
+                <svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+              </button>
+              <button class="tool" id="bulk-read" title="Mark as read">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </button>
+              <button class="tool" id="bulk-unread" title="Mark as unread">
+                <svg viewBox="0 0 24 24"><path d="M21.99 8c0-.72-.37-1.35-.94-1.7L12 1 2.95 6.3C2.38 6.65 2 7.28 2 8v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2l-.01-10zM12 13L3.74 7.84 12 3l8.26 4.84L12 13z"/></svg>
+              </button>
+            </span>
+            <span id="list-title"></span>
+            <button class="tool small" id="read-all" title="Mark all as read" hidden>
+              <svg viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/></svg>
+            </button>
+            <span class="spacer"></span>
+            <span id="pager"></span>
+            <button class="tool" id="density" title="Row density">
+              <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h18v2H3z"/></svg>
+            </button>
+            <div id="density-menu" class="menu" hidden>
+              <button class="menu-item" data-density="compact">Compact</button>
+              <button class="menu-item" data-density="cozy">Cozy</button>
+              <button class="menu-item" data-density="comfortable">Comfortable</button>
+            </div>
+            <button class="tool" id="page-prev" title="Back to top">
+              <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <button class="tool" id="page-next" title="Older conversations">
+              <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+          </div>
+          <div id="list"></div>
+          <div id="list-empty" hidden>No conversations</div>
+        </section>
+
+        <section id="thread-view" hidden>
+          <div id="thread-bar">
+            <button class="tool" id="back" title="Back to list">
+              <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </button>
+            <button class="tool" id="act-archive" title="Archive">
+              <svg viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68A1.45 1.45 0 0 0 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+            </button>
+            <button class="tool" id="act-inbox" title="Move to inbox">
+              <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 12h-4a3 3 0 0 1-6 0H5V5h14v10zm-7-3l4-4h-3V6h-2v2H8l4 4z"/></svg>
+            </button>
+            <button class="tool" id="act-trash" title="Move to trash">
+              <svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+            <button class="tool danger" id="act-delete" title="Delete forever">
+              <svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+            <span class="sep"></span>
+            <button class="tool" id="act-unread" title="Mark as unread">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </button>
+            <button class="tool" id="act-star" title="Star">
+              <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            </button>
+            <span class="spacer"></span>
+            <button class="btn ghost" id="act-open">Open in Gmail</button>
+          </div>
+          <div id="thread-scroll">
+            <div id="empty" hidden></div>
+            <h2 id="thread-subject"></h2>
+            <div id="thread-msgs"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </section>
+  <section id="composer" hidden>
+    <div id="composer-head">
+      <span id="composer-title">New message</span>
+      <span class="spacer"></span>
+      <button class="tool small" id="c-min" title="Minimize">
+        <svg viewBox="0 0 24 24"><path d="M6 19h12v2H6z"/></svg>
+      </button>
+      <button class="tool small" id="c-max" title="Full screen">
+        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+      </button>
+      <button class="tool small" id="composer-close" title="Save and close">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div id="composer-body">
+      <div class="field"><span class="k">To</span><input id="c-to" spellcheck="false"><button class="link" id="c-cc-toggle">Cc</button><button class="link" id="c-bcc-toggle">Bcc</button></div>
+      <div class="field" id="c-cc-row" hidden><span class="k">Cc</span><input id="c-cc" spellcheck="false"></div>
+      <div class="field" id="c-bcc-row" hidden><span class="k">Bcc</span><input id="c-bcc" spellcheck="false"></div>
+      <div class="field"><input id="c-subject" placeholder="Subject"></div>
+      <div id="c-tabs">
+        <button data-mode="rich">Rich text</button>
+        <button data-mode="markdown">Markdown</button>
+        <button data-mode="preview">Preview</button>
+      </div>
+      <div id="c-toolbar">
+        <select id="c-font" title="Font">
+          <option value="Arial">Sans Serif</option>
+          <option value="Georgia">Serif</option>
+          <option value="'Courier New'">Fixed width</option>
+          <option value="Verdana">Wide</option>
+          <option value="'Comic Sans MS'">Comic Sans</option>
+        </select>
+        <select id="c-size" title="Size">
+          <option value="small">Small</option>
+          <option value="normal" selected>Normal</option>
+          <option value="large">Large</option>
+          <option value="huge">Huge</option>
+        </select>
+        <span class="sep"></span>
+        <button class="tool small" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button class="tool small" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button class="tool small" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+        <button class="tool small" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+        <span class="sep"></span>
+        <button class="tool small" data-cmd="insertUnorderedList" title="Bulleted list">
+          <svg viewBox="0 0 24 24"><path d="M4 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0 12a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/></svg>
+        </button>
+        <button class="tool small" data-cmd="insertOrderedList" title="Numbered list">
+          <svg viewBox="0 0 24 24"><path d="M2 17h2v.5H3v1h1v.5H2v1h3v-4H2v1zm1-9h1V4H2v1h1v3zm-1 3h1.8L2 13.1v.9h3v-1H3.2L5 10.9V10H2v1zm5-6v2h14V5H7zm0 14h14v-2H7v2zm0-6h14v-2H7v2z"/></svg>
+        </button>
+        <button class="tool small" data-cmd="outdent" title="Decrease indent">
+          <svg viewBox="0 0 24 24"><path d="M11 17h10v-2H11v2zm-8-5l4 4V8l-4 4zm0 9h18v-2H3v2zM3 3v2h18V3H3zm8 6h10V7H11v2zm0 4h10v-2H11v2z"/></svg>
+        </button>
+        <button class="tool small" data-cmd="indent" title="Increase indent">
+          <svg viewBox="0 0 24 24"><path d="M3 21h18v-2H3v2zM3 8v8l4-4-4-4zm8 9h10v-2H11v2zM3 3v2h18V3H3zm8 6h10V7H11v2zm0 4h10v-2H11v2z"/></svg>
+        </button>
+        <span class="sep"></span>
+        <button class="tool small" data-cmd="blockquote" title="Quote">
+          <svg viewBox="0 0 24 24"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+        </button>
+        <button class="tool small" data-cmd="createLink" title="Insert link">
+          <svg viewBox="0 0 24 24"><path d="M3.9 12a3.1 3.1 0 0 1 3.1-3.1h4V7H7a5 5 0 0 0 0 10h4v-1.9H7A3.1 3.1 0 0 1 3.9 12zM8 13h8v-2H8v2zm9-6h-4v1.9h4a3.1 3.1 0 0 1 0 6.2h-4V17h4a5 5 0 0 0 0-10z"/></svg>
+        </button>
+        <button class="tool small" data-cmd="removeFormat" title="Remove formatting">
+          <svg viewBox="0 0 24 24"><path d="M3.27 5L2 6.27l6.97 6.97L6.5 19h3l1.57-3.66L16.73 21 18 19.73 3.55 5.27 3.27 5zM6 5v.18L8.82 8h2.4l-.72 1.68 2.1 2.1L14.21 8H20V5H6z"/></svg>
+        </button>
+      </div>
+      <div id="c-rich"><div id="c-editor" contenteditable="true" spellcheck="true"></div></div>
+      <div id="c-md" hidden><textarea id="c-mdtext" spellcheck="true" placeholder="# Heading, **bold**, *italic*, - list, > quote, ```code```"></textarea></div>
+      <div id="c-preview" class="md-preview" hidden></div>
+      <div id="c-attachments"></div>
+    </div>
+    <p class="error" id="c-error" hidden></p>
+    <div id="composer-foot">
+      <button class="btn send" id="c-send">Send</button>
+      <button class="tool" id="c-attach" title="Attach files">
+        <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5a4 4 0 0 1-8 0V5a2.5 2.5 0 0 1 5 0v10.5a1 1 0 0 1-2 0V6H10v9.5a2.5 2.5 0 0 0 5 0V5a4 4 0 0 0-8 0v12.5a5.5 5.5 0 0 0 11 0V6h-1.5z"/></svg>
+      </button>
+      <span class="spacer"></span>
+      <button class="tool" id="c-discard" title="Discard draft">
+        <svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </button>
+    </div>
+  </section>
+  <div id="toast" hidden></div>
+  <script src="mail.js"></script>
+</body>
+</html>

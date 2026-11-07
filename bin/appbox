@@ -1,0 +1,34 @@
+#!/bin/sh
+# Runs Appbox on the system Electron through a symlink named appbox,
+# so the main process shows that name instead of "electron".
+app=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)
+
+electron=${ELECTRON_BIN:-}
+if [ -z "$electron" ]; then
+  for candidate in /usr/lib/electron44/electron /usr/lib/electron/electron \
+                   /usr/lib64/electron/electron /usr/local/lib/electron/electron; do
+    if [ -x "$candidate" ]; then
+      electron=$candidate
+      break
+    fi
+  done
+fi
+if [ -z "$electron" ]; then
+  echo "appbox: no Electron binary found, set ELECTRON_BIN" >&2
+  exit 1
+fi
+
+# The symlink lives in a directory only this user can write.
+rt=${XDG_RUNTIME_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}}/appbox
+mkdir -p "$rt" || exit 1
+chmod 700 "$rt"
+if [ ! -O "$rt" ]; then
+  echo "appbox: $rt is not owned by $USER" >&2
+  exit 1
+fi
+ln -sfn "$electron" "$rt/appbox" || exit 1
+unset ELECTRON_RUN_AS_NODE NODE_OPTIONS NODE_EXTRA_CA_CERTS
+: "${ELECTRON_IS_DEV:=0}"; export ELECTRON_IS_DEV
+: "${ELECTRON_FORCE_IS_PACKAGED:=true}"; export ELECTRON_FORCE_IS_PACKAGED
+APPBOX_LAUNCHER=$(readlink -f "$0"); export APPBOX_LAUNCHER
+exec "$rt/appbox" "$app" "$@"

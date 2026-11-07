@@ -1,0 +1,12 @@
+{
+  "name": "appbox",
+  "version": "1.0.0",
+  "description": "Web app manager: one window, one isolated session per service",
+  "main": "src/main/main.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sylvioalves/appbox"
+  },
+  "homepage": "https://github.com/sylvioalves/appbox"
+}

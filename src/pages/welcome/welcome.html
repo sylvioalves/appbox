@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self';">
+  <title>Welcome</title>
+  <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+  <main>
+    <img src="../../../assets/appbox.svg" alt="" width="96" height="96">
+    <h1>No apps yet</h1>
+    <p>Appbox keeps your web apps in one window, each in its own isolated session.
+      Pick the apps you use and they appear in the sidebar.</p>
+    <button id="add" class="btn primary">Add apps...</button>
+    <ul class="hints">
+      <li><kbd>Ctrl</kbd>+<kbd>1</kbd> to <kbd>9</kbd> switch apps, <kbd>Ctrl</kbd>+<kbd>Tab</kbd> cycles.</li>
+      <li>Right-click an app in the sidebar for its properties.</li>
+      <li>The same app can be added twice for two accounts.</li>
+    </ul>
+  </main>
+  <script src="welcome.js"></script>
+</body>
+</html>

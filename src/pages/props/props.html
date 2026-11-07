@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' https: data:;">
+  <title>Properties</title>
+  <link rel="stylesheet" href="../dialog.css">
+</head>
+<body>
+  <header id="titlebar">
+    <span class="mini" id="mini"></span>
+    <span id="title">Properties</span>
+  </header>
+  <main>
+    <label class="row switch-row">
+      <span class="lbl">Enabled</span>
+      <input type="checkbox" id="enabled"><span class="switch"></span>
+    </label>
+    <p class="hint">Off removes the app from memory and clicking it does nothing. Turning it back on rebuilds it with the current settings.</p>
+
+    <label class="row">
+      <span class="lbl">Name</span>
+      <input type="text" id="name" maxlength="60">
+    </label>
+    <label class="row">
+      <span class="lbl">URL</span>
+      <input type="url" id="url" spellcheck="false">
+    </label>
+    <label class="row">
+      <span class="lbl">Color</span>
+      <span class="color-wrap"><input type="color" id="color"><code id="color-hex"></code></span>
+    </label>
+
+    <div class="group">
+      <label class="row switch-row">
+        <span class="lbl">Notifications</span>
+        <input type="checkbox" id="notifications"><span class="switch"></span>
+      </label>
+      <label class="row switch-row">
+        <span class="lbl">Sounds</span>
+        <input type="checkbox" id="sounds"><span class="switch"></span>
+      </label>
+    </div>
+
+    <div class="group">
+      <label class="row switch-row">
+        <span class="lbl">Sleep when idle</span>
+        <input type="checkbox" id="sleepEnabled"><span class="switch"></span>
+      </label>
+      <label class="row" id="sleep-minutes-row">
+        <span class="lbl">After minutes</span>
+        <input type="number" id="sleepMinutes" min="1" max="1440" step="1">
+      </label>
+    </div>
+
+    <label class="row">
+      <span class="lbl">At startup</span>
+      <select id="startup">
+        <option value="load">Load with Appbox</option>
+        <option value="lazy">Load on first open</option>
+      </select>
+    </label>
+    <label class="row">
+      <span class="lbl">Zoom level</span>
+      <input type="number" id="zoom" min="-3" max="5" step="0.5">
+    </label>
+
+    <div class="group" data-type="web" hidden>
+      <label class="row switch-row">
+        <span class="lbl">Force dark</span>
+        <input type="checkbox" id="forceDark"><span class="switch"></span>
+      </label>
+      <label class="row">
+        <span class="lbl">Outside links</span>
+        <select id="links">
+          <option value="external">Open in the system browser</option>
+          <option value="window">Open in a window inside Appbox</option>
+        </select>
+      </label>
+      <label class="row">
+        <span class="lbl">User agent</span>
+        <input type="text" id="userAgent" placeholder="default" spellcheck="false">
+      </label>
+    </div>
+
+    <div class="group" data-type="github-tracker" hidden>
+      <label class="row">
+        <span class="lbl">GitHub user</span>
+        <input type="text" id="gh-username" placeholder="login name" spellcheck="false">
+      </label>
+      <label class="row">
+        <span class="lbl">Repositories</span>
+        <input type="text" id="gh-repos" placeholder="owner/name, owner/name" spellcheck="false">
+      </label>
+      <div class="row">
+        <span class="lbl">Token</span>
+        <button id="forget-token" class="btn">Forget token</button>
+      </div>
+    </div>
+
+    <p class="error" id="error" hidden></p>
+  </main>
+  <footer>
+    <button id="remove" class="btn danger">Remove app...</button>
+    <button id="cancel" class="btn">Cancel</button>
+    <button id="save" class="btn primary">Save</button>
+  </footer>
+  <script src="props.js"></script>
+</body>
+</html>

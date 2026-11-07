@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' https: data:;">
+  <title>Add apps</title>
+  <link rel="stylesheet" href="../dialog.css">
+  <link rel="stylesheet" href="add.css">
+</head>
+<body>
+  <header id="titlebar">
+    <span id="title">Add apps</span>
+  </header>
+  <main>
+    <p class="intro">Each app runs in its own isolated session. Add an app twice to sign in with two accounts.</p>
+    <div id="grid"></div>
+    <p class="error" id="error" hidden></p>
+  </main>
+  <footer>
+    <span id="toast" class="toast"></span>
+    <button id="close" class="btn primary">Done</button>
+  </footer>
+  <script src="add.js"></script>
+</body>
+</html>
