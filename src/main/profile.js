@@ -27,7 +27,7 @@ const SESSION_DROPS = ['WebStorage/QuotaManager'];
 /* Encrypted secrets travel with the sessions: they only decrypt on a
  * machine with the same keyring.
  */
-const SECRET_FILES = ['mail-accounts.json', 'mail-trust.json', 'gh-tokens.json'];
+const SECRET_FILES = ['gh-tokens.json'];
 const ENTRIES_MAX = 200000;
 const BYTES_MAX = 2 * 1024 * 1024 * 1024;
 const FREE_MARGIN = 256 * 1024 * 1024;
@@ -135,11 +135,10 @@ async function decryptFile(src, dest, passphrase) {
   }
 }
 
-/* Writes a tar.gz with the app list and app state, plus the mail sign-in,
- * the image trust list and the app sessions when sessions is set, by
- * tarring a staging tree of symlinks with dereference. The mail cache is
- * never exported, it holds message contents and is fetched again. With a
- * passphrase the archive is encrypted.
+/* Writes a tar.gz with the app list and app state, plus the GitHub
+ * token and the app sessions when sessions is set, by tarring a staging
+ * tree of symlinks with dereference. With a passphrase the archive is
+ * encrypted.
  */
 async function exportProfile(file, { sessions = false, version = '', passphrase = '' } = {}) {
   if (sessions && passphrase.length < 8) {

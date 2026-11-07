@@ -17,7 +17,6 @@ const fs = require('fs');
 const config = require('./config');
 const catalog = require('./catalog');
 const { ServiceView, stripUserAgent, resetPartition, openExternal } = require('./views');
-const { MailAccount, registerMailIpc } = require('../mail/gmail');
 const { GhTracker, registerGhIpc, forgetToken } = require('../tracker/ghtrack');
 const profile = require('./profile');
 const { colors } = require('./theme');
@@ -925,15 +924,7 @@ function ensureAccount(svc) {
       v.wc.send(channel, data);
     }
   };
-  if (svc.type === 'gmail') {
-    const acc = new MailAccount(svc, builtinCtx);
-    acc.on('status', (status) => send('mail:event', { type: 'status', status }));
-    acc.on('list', () => send('mail:event', { type: 'list' }));
-    acc.on('folders', () => send('mail:event', { type: 'folders' }));
-    acc.on('open', ({ uid, thrid, box }) => send('mail:event', { type: 'open', uid, thrid, box }));
-    accounts.set(svc.id, acc);
-    acc.init();
-  } else if (svc.type === 'github-tracker') {
+  if (svc.type === 'github-tracker') {
     const tracker = new GhTracker(svc, builtinCtx);
     tracker.on('status', (status) => send('gh:event', { type: 'status', status }));
     tracker.on('data', () => send('gh:event', { type: 'data' }));
@@ -1633,8 +1624,8 @@ function warnWeakKeyring() {
     type: 'warning',
     title: 'No keyring',
     message: 'No desktop keyring was found.',
-    detail: 'The logins of your apps are stored on disk without real encryption, and the mail client '
-      + 'will not store its password. Install and unlock GNOME Keyring or KWallet, then restart Appbox.',
+    detail: 'The logins of your apps are stored on disk without real encryption, and the GitHub tracker '
+      + 'will not store its token. Install and unlock GNOME Keyring or KWallet, then restart Appbox.',
     buttons: ['OK'],
   });
 }
@@ -1807,21 +1798,6 @@ function registerIpc() {
     liveNotifications.set(id, { n, sender });
     return id;
   }));
-  registerMailIpc(ipcMain, (e) => ownPage(e, 'gmail'), openExternal, async () => {
-    const r = await dialog.showOpenDialog(win, { properties: ['openFile', 'multiSelections'] });
-    return (r.filePaths || []).map((p) => {
-      let size = 0;
-      try {
-        size = fs.statSync(p).size;
-      } catch {
-        /* unreadable: the send will report it */
-      }
-      return { path: p, name: path.basename(p), size };
-    });
-  }, {
-    downloadDir: () => config.downloadDir(cfg.settings),
-    openPath: (p) => shell.openPath(p),
-  });
   registerGhIpc(ipcMain, (e) => ownPage(e, 'github-tracker'), openExternal);
   registerPromptIpc(ipcMain);
   ipcMain.on('appbox:notify-close', guardOn(fromView, (v, id) => {

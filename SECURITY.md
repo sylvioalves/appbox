@@ -26,17 +26,17 @@ the issue is understood.
 - Navigation outside an app's allowed hosts opens in the system
   browser, or in a window with the same session when the app is set
   up that way.
-- The Gmail app password and the GitHub token are encrypted through
-  the system keyring with Electron's `safeStorage`. Without a Secret
-  Service keyring unlocked at start, the app refuses to store them.
+- The GitHub token is encrypted through the system keyring with
+  Electron's `safeStorage`. Without a Secret Service keyring unlocked
+  at start, the app refuses to store it.
 - A profile export that includes the sessions is encrypted with
   AES-256-GCM under a key derived from a passphrase with scrypt.
 
 ## What Appbox does not protect
 
-- The services file, the window state and the mail cache under
-  `~/.local/state/appbox/mail-cache` are plain files, readable by
-  any process running as your user. The directories are created
+- The services file, the window state and the tracker state under
+  `~/.local/state/appbox` are plain files, readable by any process
+  running as your user. The directories are created
   with mode 0700.
 - The Chromium profiles under `~/.local/share/appbox/Partitions`
   are stored the way Chromium stores them. Without a desktop keyring

@@ -43,8 +43,8 @@ for (const dir of [paths.config, paths.state, paths.data]) {
   }
 }
 
-/* App data stays private to the user whatever the umask: logins, mail
- * and app state live in these directories.
+/* App data stays private to the user whatever the umask: logins and
+ * app state live in these directories.
  */
 for (const dir of [paths.config, paths.state, paths.data, path.join(xdg('XDG_CACHE_HOME', '.cache'), 'appbox')]) {
   try {
@@ -117,7 +117,7 @@ const COLOR_RE = /^#[0-9a-f]{6}$/i;
 const THEMES = ['dark', 'light', 'system'];
 const LANG_RE = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/;
 /* Types whose view is an app page, never a web site. */
-const BUILTIN_TYPES = ['gmail', 'github-tracker'];
+const BUILTIN_TYPES = ['github-tracker'];
 const CONTROL_RE = /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g;
 const oneLine = (v, max) => String(v).replace(CONTROL_RE, ' ').trim().slice(0, max);
 const HOST_RE = /^(\*\.)?[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;

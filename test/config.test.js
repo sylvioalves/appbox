@@ -63,7 +63,7 @@ test('normalize rejects reserved, malformed and duplicate ids', () => {
 });
 
 test('normalize keeps built-in types and drops unknown ones', () => {
-  const cfg = config.normalize({ services: [web({ type: 'bogus' }), web({ id: 'g', type: 'gmail', links: 'window' })] });
+  const cfg = config.normalize({ services: [web({ type: 'bogus' }), web({ id: 'g', type: 'github-tracker', links: 'window' })] });
   assert.equal(cfg.services.length, 1);
   assert.equal(cfg.services[0].id, 'g');
   assert.equal(cfg.services[0].links, 'external');

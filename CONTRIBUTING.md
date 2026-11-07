@@ -42,8 +42,7 @@ Then run the app and exercise the part you changed.
 Tests live in `test/<module>.test.js` and use `node:test` with
 `node:assert/strict`, so `node --test test/*.test.js` runs them without
 Electron. They cover the modules that load without Electron: the
-parsers in `src/mail`, the configuration, the catalog and the
-profile. To add one, create or extend the file named after the
+configuration, the catalog and the profile. To add one, create or extend the file named after the
 module, require the module by relative path, and keep each test
 independent of the others and of the user's directories: set `HOME`
 and the XDG variables to a temporary directory before requiring a
@@ -62,7 +61,7 @@ module that reads them, as the config and profile tests do.
 
 One logical change per commit. The title is `area: imperative
 summary`, lowercase, where the area is the directory or subsystem
-the change touches: `app`, `mail`, `gh`, `profile`, `docs`,
+the change touches: `app`, `gh`, `profile`, `docs`,
 `scripts`, `repo`, `release`. The body says what the change does and
 why, wrapped at 65 columns. Every commit carries a `Signed-off-by:`
 line (`git commit -s`), which certifies the Developer Certificate of

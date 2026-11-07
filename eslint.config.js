@@ -2,7 +2,7 @@
 
 /* Flat config with built-in rules only, so `npx eslint src test` runs
  * without adding anything to package.json. Globals are listed by hand:
- * Node for the main process, the mail stack, the tracker, the preloads
+ * Node for the main process, the tracker, the preloads
  * and the tests, the browser for the page scripts.
  */
 const nodeGlobals = {
@@ -106,7 +106,7 @@ module.exports = [
     rules,
   },
   {
-    files: ['src/main/**/*.js', 'src/mail/**/*.js', 'src/tracker/**/*.js', 'src/pages/**/preload.js',
+    files: ['src/main/**/*.js', 'src/tracker/**/*.js', 'src/pages/**/preload.js',
       'test/**/*.js', 'eslint.config.js'],
     languageOptions: { sourceType: 'commonjs', globals: nodeGlobals },
   },

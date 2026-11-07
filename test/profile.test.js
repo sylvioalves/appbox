@@ -27,7 +27,7 @@ test.before(() => {
   config.addService({ id: 'teams', name: 'Teams', url: 'https://teams.cloud.microsoft/',
     launch: 'xdg-open https://t.example' });
   config.saveState({ bounds: { x: 1, y: 2 }, maximized: true, activeId: 'teams', secret: 'drop' });
-  fs.writeFileSync(path.join(config.paths.state, 'mail-accounts.json'), '{"fake":true}\n');
+  fs.writeFileSync(path.join(config.paths.state, 'gh-tokens.json'), '{"fake":true}\n');
   for (const f of ['teams/Cookies', 'teams/Cache/data', 'teams/stray.js', '.hidden/Cookies']) {
     fs.mkdirSync(path.dirname(path.join(sessions, f)), { recursive: true });
     fs.writeFileSync(path.join(sessions, f), f);
@@ -76,7 +76,7 @@ test('stageImport unpacks a vetted tree and keeps only the login stores', async 
   assert.equal(staged('sessions/teams/Cache'), false);
   assert.equal(staged('sessions/teams/stray.js'), false);
   assert.equal(staged('sessions/.hidden'), false);
-  assert.equal(staged('state/mail-accounts.json'), true);
+  assert.equal(staged('state/gh-tokens.json'), true);
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(staging, 'state', 'state.json'), 'utf8')),
     { bounds: { x: 1, y: 2 }, maximized: true, activeId: 'teams' });
 });
@@ -101,7 +101,7 @@ test('a plain export carries no secrets and applies on the next start', async ()
 
   const staged = await profile.stageImport(plain);
   assert.equal(staged.sessions, false);
-  assert.equal(fs.existsSync(path.join(staging, 'state', 'mail-accounts.json')), false);
+  assert.equal(fs.existsSync(path.join(staging, 'state', 'gh-tokens.json')), false);
   profile.commitImport();
   const applied = profile.applyPendingImport();
   assert.deepEqual(applied.applied, ['config', 'state']);

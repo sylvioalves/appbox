@@ -16,8 +16,8 @@ with the window bounds, the active app, remembered favicons,
 permission grants per app, permission and origin, approved `launch`
 commands and partitions to purge (saved with a 500 ms debounce and
 before quitting), `views`, a `Map` from app id to `ServiceView`, and
-`accounts`, a `Map` from app id to the `MailAccount` or `GhTracker`
-behind a built-in app.
+`accounts`, a `Map` from app id to the `GhTracker` behind a built-in
+app.
 
 The main window is a `BrowserWindow` that loads the sidebar page, and
 the app views, the context menu view and the welcome view are children
@@ -33,14 +33,14 @@ one session on purpose. The preload is `src/main/preload-service.js`
 for a web app, which bridges `Notification` to the main process, or
 the page preload of a built-in type. `setupSession()` runs once per
 partition and installs the permission, display capture and download
-handlers. A view loads `svc.url`, or for the types `gmail` and
-`github-tracker` the pages `mail.html` and `gh.html`.
+handlers. A view loads `svc.url`, or for the type `github-tracker`
+the page `gh.html`.
 
 ## Built-in pages
 
 Each page lives in `src/pages/<page>/` as `<page>.html`, `<page>.js`,
 an optional `<page>.css` and a `preload.js`: `sidebar`, `menu`,
-`props`, `add`, `settings`, `welcome`, `prompt`, `mail` and `gh`. A
+`props`, `add`, `settings`, `welcome`, `prompt` and `gh`. A
 page runs sandboxed with context isolation and no Node integration,
 and its preload exposes one small object through `contextBridge`
 whose methods map to `ipcRenderer.invoke`, `send` and `on`.
@@ -54,32 +54,29 @@ an account) and throws `ipc: sender not allowed` otherwise, and
 `guardOn` is the `on` counterpart that drops the message. The
 predicates (`fromSidebar`, `fromMenu`, `fromProps`, `fromView`,
 `fromPrompt` and the like) compare `event.sender` with the
-`webContents` of one window or view. For the mail and tracker pages
+`webContents` of one window or view. For the tracker page
 `ownPage()` also requires the sender URL to start with `file://`, so
 a site that navigated the view never reaches the account behind it.
 
 Channel names carry the page or subsystem as prefix: `appbox:*` for
 the sidebar, the menu, the welcome page, the properties dialog
 (`appbox:props-*`) and the notifications of the app views,
-`settings:*`, `add:*` and `prompt:*` for the dialogs, `mail:*` and
-`gh:*` for the built-in apps, and `menu:open` for the data pushed to
+`settings:*`, `add:*` and `prompt:*` for the dialogs, `gh:*` for the
+tracker, and `menu:open` for the data pushed to
 the context menu view. Updates from the main process arrive as
-`appbox:update`, `appbox:status`, `mail:event` and `gh:event`.
+`appbox:update`, `appbox:status` and `gh:event`.
 
 ## Accounts
 
-`MailAccount` in `src/mail/gmail.js` and `GhTracker` in
-`src/tracker/ghtrack.js` extend `EventEmitter` and share one
-lifecycle: the constructor takes the service entry `svc` and a `ctx`,
-`init()` reads the stored secret through `safeStorage` when the
-keyring is secure and starts the connections or the polling, `stop()`
-clears timers and connections, `forget()` logs out and removes the
-per-account files, and `status()` returns the snapshot the page
-renders. The `ctx` built in `main.js` offers `onBadge(id, n)`,
+`GhTracker` in `src/tracker/ghtrack.js` extends `EventEmitter`: the
+constructor takes the service entry `svc` and a `ctx`, `init()` reads
+the stored token through `safeStorage` when the keyring is secure and
+starts the polling, `stop()` clears the timers, `forget()` logs out
+and removes the per-account files, and `status()` returns the
+snapshot the page renders. The `ctx` built in `main.js` offers `onBadge(id, n)`,
 `onProgress(id, p)`, `patch(id, patch)`, `notify({ title, body,
-onClick })` and `activate(id)`. The events `status`, `list`,
-`folders` and `open` of the mail account and `status` and `data` of
-the tracker are forwarded to the page as `mail:event` and `gh:event`.
+onClick })` and `activate(id)`. The events `status` and `data` of
+the tracker are forwarded to the page as `gh:event`.
 
 ## Command line
 
@@ -96,7 +93,6 @@ started with `--quit`.
 A profile is a `tar.gz` with `manifest.json` (`app`, `version`,
 `exported_at`, `host`, `sessions`), `config/services.json`,
 `state/state.json` and, when the sessions are included,
-`state/mail-accounts.json`, `state/mail-trust.json`,
 `state/gh-tokens.json` and `sessions/` with the partitions minus the
 Chromium caches. Including the sessions requires a passphrase of at
 least eight characters. With a passphrase the file is encrypted: the
@@ -112,8 +108,7 @@ start before any window exists.
   overrides it). The autostart entry is written to
   `$XDG_CONFIG_HOME/autostart/io.github.sylvioalves.appbox.desktop`.
 - `$XDG_STATE_HOME/appbox`: `state.json`, the keyring-encrypted
-  `mail-accounts.json`, `mail-trust.json` and `gh-tokens.json`,
-  `mail-cache/<id>.json` and `gh/<id>.json`.
+  `gh-tokens.json` and `gh/<id>.json`.
 - `$XDG_DATA_HOME/appbox`: Electron's `userData` and `sessionData`,
   with one Chromium profile per partition under `Partitions/`.
 - `$XDG_CACHE_HOME/appbox`: the Node compile cache, the export

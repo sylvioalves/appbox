@@ -9,7 +9,6 @@ const { colors } = require('./theme');
 const PRELOAD = path.join(__dirname, 'preload-service.js');
 const PAGES = path.join(__dirname, '..', 'pages');
 const BUILTIN = {
-  gmail: { preload: path.join(PAGES, 'mail', 'preload.js'), page: path.join(PAGES, 'mail', 'mail.html') },
   'github-tracker': { preload: path.join(PAGES, 'gh', 'preload.js'), page: path.join(PAGES, 'gh', 'gh.html') },
 };
 const BADGE_RE = /\((\d+)\)/;

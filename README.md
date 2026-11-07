@@ -3,10 +3,8 @@
 </p>
 
 Appbox keeps your web apps in one window, each in its own isolated
-session, with a sidebar to switch between them. It ships a built-in
-Gmail client that talks IMAP directly, since Google does not allow its
-web interface inside embedded browsers, and a GitHub tracker that
-lists the pull requests waiting on you. It runs on Linux on the
+session, with a sidebar to switch between them. It ships a GitHub
+tracker that lists the pull requests waiting on you. It runs on Linux on the
 system Electron package, so where the distribution packages Electron
 the Chromium security updates come from the distribution rather than
 from a bundled runtime.
@@ -36,11 +34,6 @@ from a bundled runtime.
 - Per-app properties: name, URL, color, notifications, sounds, forced
   dark mode, sleep when idle, startup mode, where outside links open,
   custom user agent.
-- Gmail over IMAP: Gmail-style conversation list with snippets, folder
-  tree with pinned labels, search with Gmail's own syntax, archive,
-  trash, star, mark read, remote images per sender, cached folders for
-  instant startup, new mail picked up in watched folders, and sending
-  through SMTP.
 - GitHub tracker: the pull requests you review, are assigned to or
   author in the repositories you name, with a "My turn" list and saved
   searches of your own.
@@ -156,25 +149,6 @@ apps run a `launch` command.
 Appbox is single-instance: starting it again brings the running window
 to the front.
 
-## Gmail client
-
-The mail client signs in with your address and a Google app password
-(Google Account, Security, 2-Step Verification, App passwords). The
-password is stored through the system keyring: without a Secret
-Service keyring (GNOME Keyring, or KWallet through its Secret Service
-interface) unlocked at start, the app refuses to store it. Four IMAP
-connections are used: one for folder sync and actions, one idling on
-All Mail so new mail in any label is noticed, one for opening
-conversations, and one for background counts and prefetch. Mail is
-sent through Gmail's SMTP submission server with the same app
-password: Compose in the folder tree, Reply, Reply all and Forward on
-each message, plain text with the quoted original, attachments from
-the file dialog, and unsent drafts kept locally until sent or
-discarded. Ctrl+Enter sends.
-
-Set `APPBOX_MAIL_TIMING=1` to print per-step timings of the mail client
-on the console.
-
 ## GitHub tracker
 
 The GH Tracker app lists the pull requests tied to one GitHub user in
@@ -183,9 +157,10 @@ commented, authored, and the ones merged in the last 30 days. It signs
 in with a personal access token that can read pull requests and
 metadata on those repositories (a classic token needs the `repo`
 scope, or `public_repo` for public repositories only). The token is
-stored through the system keyring and never written to the services
-file, and like the mail password it is not stored at all without a
-Secret Service keyring. The GitHub GraphQL API is polled every 10
+stored through the system keyring (GNOME Keyring, or KWallet through
+its Secret Service interface) and never written to the services
+file, and it is not stored at all without a Secret Service keyring
+unlocked at start. The GitHub GraphQL API is polled every 10
 minutes with one search per list, 25 pull requests each, well inside
 the API rate limit.
 
@@ -215,14 +190,13 @@ writes it when you add, change or remove an app, and it can also be
 edited by hand. Each entry has an `id`, `name`, `url`, a list of
 allowed `hosts` (navigation elsewhere opens outside), the browser
 `permissions` it may use, and the options shown in the properties
-window. Set `"type": "gmail"` for the built-in mail client and
-`"type": "github-tracker"` for the GitHub tracker. The catalog entries
+window. Set `"type": "github-tracker"` for the GitHub tracker. The catalog entries
 are in `src/main/catalog.json`.
 
 | Path | Content |
 |------|---------|
 | `~/.config/appbox/services.json` | Apps and global settings |
-| `~/.local/state/appbox/` | Window state, mail cache, tracker state, encrypted mail and GitHub credentials, image trust list |
+| `~/.local/state/appbox/` | Window state, tracker state, encrypted GitHub token |
 | `~/.local/share/appbox/Partitions/` | One Chromium profile per app |
 
 The `XDG_CONFIG_HOME`, `XDG_STATE_HOME` and `XDG_DATA_HOME` variables
@@ -230,10 +204,9 @@ move these as usual. Set `APPBOX_CONFIG` to use another services
 file.
 
 The gear menu exports the profile to a `tar.gz` with the app list
-and state, and optionally the app sessions together with the mail
-sign-in and the image trust list. Exporting the sessions requires a
-passphrase of at least eight characters, and the archive is then
-encrypted. The mail cache is never exported. Import restores an
+and state, and optionally the app sessions together with the GitHub
+token. Exporting the sessions requires a passphrase of at least eight
+characters, and the archive is then encrypted. Import restores an
 archive on another machine, asking for the passphrase when needed.
 
 ## Security notes
@@ -244,13 +217,12 @@ archive on another machine, asking for the passphrase when needed.
 - A window opened for an outside link shares the session of the app
   it came from, by design, so a login kept in that app is visible to
   the page opened in the window.
-- The mail password and the GitHub token are encrypted through the
-  system keyring. Without a Secret Service keyring the app refuses to
-  store them and warns once that the logins of the web apps, which
+- The GitHub token is encrypted through the system keyring. Without
+  a Secret Service keyring the app refuses to store it and warns once that the logins of the web apps, which
   Chromium encrypts with the same keyring key, fall back to a fixed
   built-in key.
-- The services file, the window state and the mail cache are plain
-  files under directories created with mode 0700.
+- The services file, the window state and the tracker state are
+  plain files under directories created with mode 0700.
 - A profile export is encrypted with AES-256-GCM under a scrypt key
   only when a passphrase is given, which is required whenever the
   sessions are included.
@@ -287,8 +259,8 @@ A Flatpak manifest needs, beyond the Electron base app:
 - the Wayland and fallback X11 sockets, `--device=dri`, the
   PulseAudio socket and `--share=network`
 - `--talk-name=org.freedesktop.secrets`, since Chromium's password
-  store talks to the Secret Service directly and without it the mail
-  password and the GitHub token are not stored
+  store talks to the Secret Service directly and without it the
+  GitHub token is not stored
 - `--talk-name=org.freedesktop.Notifications` for desktop
   notifications
 - `--talk-name=org.kde.StatusNotifierWatcher` for the tray icon
@@ -316,7 +288,6 @@ step and no dependencies beyond Electron:
 | `src/main/config.js`, `catalog.js`, `catalog.json` | Configuration and the app catalog |
 | `src/main/profile.js`, `theme.js`, `keyring.js` | Export and import, colors, secret storage |
 | `src/main/preload-service.js` | Preload injected into every web app |
-| `src/mail/` | The mail client: IMAP, SMTP, MIME and message building |
 | `src/tracker/ghtrack.js` | The GitHub tracker |
 | `src/pages/<page>/` | Each built-in page: html, js, css and its `preload.js` |
 | `src/pages/dialog.css` | Styles shared by the dialog pages |

@@ -17,8 +17,6 @@ First public release.
 - One window for web apps, each in its own isolated session, with a
   sidebar to switch between them and a catalog of ready-made entries
   for common services plus a custom entry for any address.
-- A built-in Gmail client that talks IMAP and SMTP directly, with
-  notifications and an unread badge.
 - A GitHub tracker that lists the pull requests waiting on you and
   runs saved searches against the repositories you follow.
 - Profile export and import, with the sessions included only in an

@@ -17,9 +17,8 @@
       by side.
     </p>
     <p>
-      It ships a built-in Gmail client that talks IMAP directly, since
-      Google does not allow its web interface inside embedded browsers,
-      and a GitHub tracker that lists the pull requests waiting on you.
+      It ships a GitHub tracker that lists the pull requests waiting on
+      you and runs saved searches against the repositories you follow.
     </p>
     <p>
       Appbox runs on the system Electron package, so where the

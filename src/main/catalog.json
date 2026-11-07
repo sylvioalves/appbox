@@ -62,11 +62,18 @@
     {
       "id": "gmail",
       "name": "Gmail",
-      "description": "Built-in mail client over IMAP, signs in with an app password",
-      "type": "gmail",
-      "url": "https://mail.google.com/mail/u/0/",
+      "description": "Gmail on the web",
+      "url": "https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/u/0/",
       "color": "#ea4335",
-      "icon": "gmail.svg"
+      "icon": "gmail.svg",
+      "hosts": [
+        "mail.google.com"
+      ],
+      "permissions": [
+        "notifications",
+        "clipboard-read",
+        "clipboard-sanitized-write"
+      ]
     },
     {
       "id": "whatsapp",

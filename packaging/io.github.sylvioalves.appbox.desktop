@@ -5,5 +5,5 @@ Comment=Web app manager
 Exec=appbox
 Icon=io.github.sylvioalves.appbox
 Terminal=false
-Categories=Network;InstantMessaging;Email;
+Categories=Network;InstantMessaging;
 StartupWMClass=io.github.sylvioalves.appbox
