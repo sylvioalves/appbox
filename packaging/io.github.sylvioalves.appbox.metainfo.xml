@@ -2,13 +2,15 @@
 <component type="desktop-application">
   <id>io.github.sylvioalves.appbox</id>
   <name>Appbox</name>
-  <summary>Web app manager with one isolated session per app</summary>
+  <summary>Web apps, each in its own session</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
   <developer id="io.github.sylvioalves">
     <name>Sylvio Alves</name>
   </developer>
   <url type="homepage">https://github.com/sylvioalves/appbox</url>
+  <url type="bugtracker">https://github.com/sylvioalves/appbox/issues</url>
+  <url type="vcs-browser">https://github.com/sylvioalves/appbox</url>
   <description>
     <p>
       Appbox keeps your web apps in one window, each in its own isolated
@@ -21,9 +23,9 @@
       you and runs saved searches against the repositories you follow.
     </p>
     <p>
-      Appbox runs on the system Electron package, so where the
-      distribution packages Electron the Chromium security updates come
-      from the distribution rather than from a bundled runtime.
+      Distribution packages run Appbox on the system Electron, so the
+      Chromium security updates come with the distribution. The Flatpak
+      bundles the Electron release it was built with.
     </p>
   </description>
   <launchable type="desktop-id">io.github.sylvioalves.appbox.desktop</launchable>
@@ -38,6 +40,7 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.1.0" date="2026-11-07"/>
     <release version="1.0.0" date="2026-11-07"/>
   </releases>
   <content_rating type="oars-1.1"/>

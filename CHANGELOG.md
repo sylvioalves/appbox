@@ -8,6 +8,16 @@ verifies.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-07
+
+### Added
+
+- A Flatpak manifest under packaging/flatpak that bundles Electron
+  and runs it through zypak, with the launcher the sandbox needs.
+- Inside the sandbox the login autostart entry goes through the
+  Background portal, over a small D-Bus client of its own, and the
+  setting is kept in the app state.
+
 ## [1.0.0] - 2026-11-07
 
 First public release.
@@ -24,5 +34,6 @@ First public release.
 - A user-level install script, an Arch Linux PKGBUILD and an
   AppStream metainfo file under the id io.github.sylvioalves.appbox.
 
-[Unreleased]: https://github.com/sylvioalves/appbox/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/sylvioalves/appbox/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/sylvioalves/appbox/releases/tag/v1.1.0
 [1.0.0]: https://github.com/sylvioalves/appbox/releases/tag/v1.0.0

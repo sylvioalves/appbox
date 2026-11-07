@@ -5,6 +5,7 @@ const os = require('os');
 const path = require('path');
 
 const APP_ID = 'io.github.sylvioalves.appbox';
+const FLATPAK = fs.existsSync('/.flatpak-info');
 const home = os.homedir();
 const xdg = (name, fallback) => process.env[name] || path.join(home, fallback);
 
@@ -400,7 +401,7 @@ const loadState = () => readJson(paths.stateFile, {});
 const saveState = (state) => writeJsonAtomic(paths.stateFile, state);
 
 module.exports = {
-  APP_ID, paths, hostOf, isWebUrl, isHost, hostList, isDownloadDir, ASKED_PERMISSIONS, USERNAME_RE, ID_RE, BUILTIN_TYPES, THEMES,
+  APP_ID, FLATPAK, paths, hostOf, isWebUrl, isHost, hostList, isDownloadDir, ASKED_PERMISSIONS, USERNAME_RE, ID_RE, BUILTIN_TYPES, THEMES,
   oneLine, normalizeLists, normalize, load, isFirstRun, addService, removeService, saveOrder, patchService, patchSettings, downloadDir,
   loadState, saveState,
 };

@@ -1,6 +1,6 @@
 {
   "name": "appbox",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Web app manager: one window, one isolated session per service",
   "main": "src/main/main.js",
   "license": "MIT",

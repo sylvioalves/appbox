@@ -58,9 +58,12 @@ function handleCli(argv, deps) {
   }
   const i = argv.indexOf('--autostart');
   if (i !== -1) {
-    setAutostart(argv[i + 1] !== 'off');
-    console.log(`autostart ${autostartEnabled() ? 'enabled' : 'disabled'}`);
-    return true;
+    return Promise.resolve(setAutostart(argv[i + 1] !== 'off')).then(() => {
+      console.log(`autostart ${autostartEnabled() ? 'enabled' : 'disabled'}`);
+    }, (err) => {
+      console.error(`autostart failed: ${err.message}`);
+      process.exitCode = 1;
+    }).then(() => true);
   }
   return false;
 }

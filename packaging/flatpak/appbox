@@ -1,0 +1,10 @@
+#!/bin/sh
+# Runs Appbox inside the Flatpak sandbox: the bundled Electron through
+# zypak, under a symlink named appbox so the process shows that name.
+rt=${XDG_RUNTIME_DIR:-/tmp}/app/${FLATPAK_ID:-io.github.sylvioalves.appbox}
+mkdir -p "$rt" || exit 1
+ln -sfn /app/lib/appbox/electron/electron "$rt/appbox" || exit 1
+unset ELECTRON_RUN_AS_NODE NODE_OPTIONS NODE_EXTRA_CA_CERTS
+: "${ELECTRON_IS_DEV:=0}"; export ELECTRON_IS_DEV
+: "${ELECTRON_FORCE_IS_PACKAGED:=true}"; export ELECTRON_FORCE_IS_PACKAGED
+exec zypak-wrapper "$rt/appbox" /app/lib/appbox "$@"

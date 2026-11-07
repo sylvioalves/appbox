@@ -1,0 +1,67 @@
+# Builds Appbox as a Flatpak: the Electron release bundled here runs
+# through zypak from the Electron base app, with the sources under
+# /app/lib/appbox. Flathub builds from the git tag, a local build can
+# point the appbox source at a checkout with a dir source instead.
+id: io.github.sylvioalves.appbox
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '26.08'
+command: appbox
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  # Camera and microphone for the apps that call
+  - --device=all
+  # Chromium keeps the GitHub token in the Secret Service
+  - --talk-name=org.freedesktop.secrets
+  # Desktop notifications and the tray icon
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.kde.StatusNotifierWatcher
+  # Downloads from the apps land in the download folder
+  - --filesystem=xdg-download
+  # Node mode and node options from the caller's environment must not reach Electron
+  - --unset-env=ELECTRON_RUN_AS_NODE
+  - --unset-env=NODE_OPTIONS
+  - --unset-env=NODE_EXTRA_CA_CERTS
+modules:
+  - name: electron
+    buildsystem: simple
+    build-commands:
+      - install -d /app/lib/appbox/electron
+      - cp -a electron/. /app/lib/appbox/electron/
+    sources:
+      - type: archive
+        only-arches: [x86_64]
+        dest: electron
+        strip-components: 0
+        url: https://github.com/electron/electron/releases/download/v44.10.2/electron-v44.10.2-linux-x64.zip
+        sha256: d2f9319dc81d6786c684a80f63d728421761f55a27a3ae3bd373250f0f40fdca
+      - type: archive
+        only-arches: [aarch64]
+        dest: electron
+        strip-components: 0
+        url: https://github.com/electron/electron/releases/download/v44.10.2/electron-v44.10.2-linux-arm64.zip
+        sha256: 17c7e2740c397957255d2eda16f8f9042230f84ffb458400a9cc14f9e0dd6879
+  - name: appbox
+    buildsystem: simple
+    build-commands:
+      - install -d /app/lib/appbox
+      - cp -r src assets package.json LICENSE /app/lib/appbox/
+      - install -Dm755 packaging/flatpak/appbox /app/bin/appbox
+      - install -Dm644 packaging/io.github.sylvioalves.appbox.desktop -t /app/share/applications
+      - install -Dm644 packaging/io.github.sylvioalves.appbox.metainfo.xml -t /app/share/metainfo
+      - install -Dm644 assets/appbox.svg /app/share/icons/hicolor/scalable/apps/io.github.sylvioalves.appbox.svg
+      - install -Dm644 assets/appbox.png /app/share/icons/hicolor/256x256/apps/io.github.sylvioalves.appbox.png
+    sources:
+      - type: git
+        url: https://github.com/sylvioalves/appbox.git
+        tag: v1.1.0
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$

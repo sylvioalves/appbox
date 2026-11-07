@@ -2,7 +2,7 @@
 # Usage: cd packaging/arch && makepkg -f && sudo pacman -U appbox-*.pkg.tar.zst
 
 pkgname=appbox
-pkgver=1.0.0
+pkgver=1.1.0
 pkgrel=1
 pkgdesc='Web app manager: one window, one isolated session per service'
 arch=('any')

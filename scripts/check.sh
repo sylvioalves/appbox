@@ -37,7 +37,7 @@ for d in src/pages/*/; do
 done
 if [ -z "$bad" ]; then pass "pages"; else fail "pages:$bad"; fi
 
-if sh -n install.sh && sh -n bin/appbox && sh -n scripts/check.sh; then
+if sh -n install.sh && sh -n bin/appbox && sh -n packaging/flatpak/appbox && sh -n scripts/check.sh; then
   pass "shell"
 else
   fail "shell"
@@ -50,10 +50,11 @@ pkg=$(sed -n 's/^ *"version": *"\([^"]*\)".*/\1/p' package.json)
 pkgver=$(sed -n 's/^pkgver=//p' packaging/arch/PKGBUILD)
 log=$(sed -n 's/^## \[\([0-9][^]]*\)\].*/\1/p' CHANGELOG.md | head -n 1)
 meta=$(sed -n 's/.*<release version="\([^"]*\)".*/\1/p' packaging/*.metainfo.xml | head -n 1)
-if [ -n "$pkg" ] && [ "$pkg" = "$pkgver" ] && [ "$pkg" = "$log" ] && [ "$pkg" = "$meta" ]; then
+flat=$(sed -n 's/^ *tag: v//p' packaging/flatpak/*.yml | head -n 1)
+if [ -n "$pkg" ] && [ "$pkg" = "$pkgver" ] && [ "$pkg" = "$log" ] && [ "$pkg" = "$meta" ] && [ "$pkg" = "$flat" ]; then
   pass "version $pkg"
 else
-  fail "version: package.json $pkg, PKGBUILD $pkgver, CHANGELOG $log, metainfo $meta"
+  fail "version: package.json $pkg, PKGBUILD $pkgver, CHANGELOG $log, metainfo $meta, flatpak $flat"
 fi
 
 if command -v appstreamcli >/dev/null 2>&1; then

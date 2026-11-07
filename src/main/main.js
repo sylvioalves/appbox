@@ -22,6 +22,7 @@ const profile = require('./profile');
 const { colors } = require('./theme');
 const { guard, guardOn } = require('./ipc');
 const { handleCli } = require('./cli');
+const portal = require('./portal');
 const { createProfileDialogs } = require('./profile-dialogs');
 
 const REBUILD_KEYS = ['enabled', 'url', 'partition', 'userAgent', 'forceDark', 'hosts', 'permissions', 'username', 'repos'];
@@ -1054,11 +1055,36 @@ function repaintShell() {
   }
 }
 
+/* The sandbox cannot see the host's autostart folder, so there the
+ * answer of the Background portal is kept in the app state.
+ */
 function autostartEnabled() {
+  if (config.FLATPAK) {
+    return Boolean((state || config.loadState()).autostart);
+  }
   return fs.existsSync(config.paths.autostart);
 }
 
+function setAutostartPortal(enabled) {
+  return portal.requestBackground({
+    autostart: enabled,
+    commandline: ['appbox', '--hidden'],
+    reason: 'Start Appbox at login and keep it in the tray',
+  }).then((r) => {
+    if (enabled && !r.autostart) {
+      console.error(`autostart: the portal did not allow it (response ${r.response})`);
+    }
+    state = state || config.loadState();
+    state.autostart = r.autostart;
+    config.saveState(state);
+    updateTray();
+  });
+}
+
 function setAutostart(enabled) {
+  if (config.FLATPAK) {
+    return setAutostartPortal(enabled);
+  }
   if (enabled) {
     fs.mkdirSync(path.dirname(config.paths.autostart), { recursive: true });
     fs.writeFileSync(config.paths.autostart, [
@@ -1075,6 +1101,7 @@ function setAutostart(enabled) {
   } else {
     fs.rmSync(config.paths.autostart, { force: true });
   }
+  return Promise.resolve();
 }
 
 function trayMenu() {
@@ -1843,6 +1870,9 @@ function main() {
   createViews();
   createTray();
   setInterval(sampleUsage, USAGE_MS);
+  if (config.FLATPAK && state.autostart) {
+    setAutostartPortal(true).catch((err) => console.error(`autostart: ${err.message}`));
+  }
 
   win.once('ready-to-show', () => {
     layout();

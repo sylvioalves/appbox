@@ -92,7 +92,25 @@ app. Run
 `./install.sh --uninstall` to remove it. Configuration and sessions
 are kept.
 
-Flatpak and Debian packages are planned.
+### Flatpak
+
+The manifest in `packaging/flatpak` builds Appbox with a bundled
+Electron that runs through zypak from the Electron base app, for
+Flathub or a local build:
+
+```
+flatpak install flathub org.flatpak.Builder
+flatpak run org.flatpak.Builder --force-clean --user --install \
+  --install-deps-from=flathub build-dir \
+  packaging/flatpak/io.github.sylvioalves.appbox.yml
+flatpak run io.github.sylvioalves.appbox
+```
+
+Inside the sandbox the autostart entry goes through the Background
+portal, so the desktop asks once whether Appbox may run in the
+background, and a `launch` command of an app runs inside the sandbox.
+
+A Debian package is planned.
 
 ## Usage
 
@@ -123,8 +141,9 @@ configuration, toggles start at login and quits.
 
 The gear at the bottom of the sidebar opens a small menu with "Start
 at login", which writes or removes
-`~/.config/autostart/io.github.sylvioalves.appbox.desktop`.
-The entry starts Appbox hidden in the tray. The same switch is in the
+`~/.config/autostart/io.github.sylvioalves.appbox.desktop`, or asks
+the Background portal to do so when Appbox runs as a Flatpak. The
+entry starts Appbox hidden in the tray. The same switch is in the
 tray menu and on the command line: `appbox --autostart on|off`. The
 menu also shows the running version, and `appbox --version` prints
 it.
@@ -254,7 +273,7 @@ written to `~/.config/autostart` uses it as the icon name and the
 launcher path from `APPBOX_LAUNCHER`. A package that renames the
 desktop file has to change those too.
 
-A Flatpak manifest needs, beyond the Electron base app:
+A Flatpak needs, beyond the Electron base app:
 
 - the Wayland and fallback X11 sockets, `--device=dri`, the
   PulseAudio socket and `--share=network`
@@ -270,10 +289,12 @@ A Flatpak manifest needs, beyond the Electron base app:
 - `--filesystem=xdg-download`, since downloads from the apps are
   saved into the download folder
 
-Two things do not work from a sandbox as the code stands: the
-autostart entry is written straight into `~/.config/autostart` rather
-than through the Background portal, and a `launch` command of an app
-is spawned inside the sandbox.
+The manifest in `packaging/flatpak` sets these. Appbox detects the
+sandbox through `/.flatpak-info`: the autostart entry then goes
+through the Background portal with `src/main/portal.js`, a small
+D-Bus client, and the answer is kept in the app state because the
+host's autostart folder is not visible from inside. A `launch`
+command of an app is spawned inside the sandbox.
 Uninstalling never removes the autostart entry in `~/.config/autostart`.
 
 ## Development
@@ -287,6 +308,7 @@ step and no dependencies beyond Electron:
 | `src/main/views.js` | One `WebContentsView` per app |
 | `src/main/config.js`, `catalog.js`, `catalog.json` | Configuration and the app catalog |
 | `src/main/profile.js`, `theme.js`, `keyring.js` | Export and import, colors, secret storage |
+| `src/main/portal.js` | D-Bus client for the Background portal inside the Flatpak sandbox |
 | `src/main/preload-service.js` | Preload injected into every web app |
 | `src/tracker/ghtrack.js` | The GitHub tracker |
 | `src/pages/<page>/` | Each built-in page: html, js, css and its `preload.js` |
