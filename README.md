@@ -46,9 +46,30 @@ from a bundled runtime.
 
 ## Install
 
-Appbox needs Linux with Electron 44 installed as a system package
-(`electron44` on Arch Linux) and a Wayland or X11 session. GNOME
-needs an AppIndicator extension for the tray icon.
+Appbox needs Linux and a Wayland or X11 session. The Arch package
+and a checkout run on Electron 44 installed as a system package
+(`electron44` on Arch Linux), while the Debian package and the
+Flatpak bundle their own Electron. GNOME needs an AppIndicator
+extension for the tray icon.
+
+### Debian and Ubuntu
+
+Each release on GitHub carries a Debian package for amd64 and arm64,
+built by the release workflow, for Ubuntu 22.04 or later and Debian
+12 or later:
+
+```
+curl -LO https://github.com/sylvioalves/appbox/releases/download/v<version>/appbox_<version>_amd64.deb
+sudo apt install ./appbox_<version>_amd64.deb
+```
+
+It installs the sources under `/usr/lib/appbox`, the Electron release
+pinned in the Flatpak manifest under `/usr/lib/appbox/electron`, a
+launcher at `/usr/bin/appbox`, the desktop entry, the icons and the
+metainfo. The package does not add an apt repository, so an update is
+the same download and install of the newer release, and Electron and
+its Chromium are updated only with a new Appbox release.
+`packaging/deb/build.sh amd64` builds the package from a checkout.
 
 ### Arch Linux and CachyOS
 
@@ -118,8 +139,6 @@ flatpak run io.github.sylvioalves.appbox
 Inside the sandbox the autostart entry goes through the Background
 portal, so the desktop asks once whether Appbox may run in the
 background, and a `launch` command of an app runs inside the sandbox.
-
-A Debian package is planned.
 
 ## Usage
 
@@ -271,9 +290,17 @@ The launcher looks for Electron at `/usr/lib/electron44/electron`,
 `/usr/local/lib/electron/electron`, in that order, and `ELECTRON_BIN`
 overrides the search. The PKGBUILD depends on `electron44`. The main
 process uses Node's compile cache, which needs Node 22.1 or later, as
-in Electron 44. Both the launcher and the PKGBUILD unset
-`ELECTRON_RUN_AS_NODE`, `NODE_OPTIONS` and `NODE_EXTRA_CA_CERTS` before
-starting Electron, and any other launcher must do the same.
+in Electron 44. The launcher, the PKGBUILD and the Debian package
+unset `ELECTRON_RUN_AS_NODE`, `NODE_OPTIONS` and `NODE_EXTRA_CA_CERTS`
+before starting Electron, and any other launcher must do the same.
+
+The Debian package keeps Chromium's sandbox helper `chrome-sandbox`
+setuid root, and on systems whose AppArmor restricts unprivileged
+user namespaces, such as Ubuntu 24.04, its postinst installs the
+profile `/etc/apparmor.d/appbox` that allows them for the bundled
+Electron. An AppArmor that cannot parse the profile, such as the one
+in Ubuntu 22.04, does not restrict them either, and the profile is
+skipped there.
 
 The app id `io.github.sylvioalves.appbox` is fixed in the code: the
 desktop file, the icons and the metainfo are named after it, it is set
@@ -323,7 +350,7 @@ step and no dependencies beyond Electron:
 | `src/pages/<page>/` | Each built-in page: html, js, css and its `preload.js` |
 | `src/pages/dialog.css` | Styles shared by the dialog pages |
 | `assets/` | Icons and the banner |
-| `packaging/` | Desktop entry, AppStream metainfo and the Arch PKGBUILD |
+| `packaging/` | Desktop entry, AppStream metainfo, the Arch PKGBUILD, the Debian package build and the Flatpak manifest |
 
 Run from source with `./bin/appbox`, with `APPBOX_CONFIG` pointing at
 a scratch services file to keep your own apps aside. Before sending a

@@ -1,18 +1,26 @@
-# Builds the Arch Linux package from packaging/arch on every release
-# tag and attaches it to the GitHub release of that tag, creating the
-# release when it does not exist yet.
+# Builds the Arch Linux package from packaging/arch and the Debian
+# packages from packaging/deb on every release tag and attaches them
+# to the GitHub release of that tag, creating the release when it does
+# not exist yet. Started by hand with a tag, it builds and attaches
+# only the Debian packages of that tag.
 name: release
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build the Debian packages for
+        required: true
 
 permissions:
   contents: write
 
 jobs:
   arch:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     container: archlinux:base-devel
     steps:
@@ -35,5 +43,39 @@ jobs:
           tag=${GITHUB_REF_NAME}
           gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
             || gh release create "$tag" --repo "$GITHUB_REPOSITORY" --verify-tag \
-                 --title "Appbox ${tag#v}" --notes "See CHANGELOG.md for the changes in this release."
+                 --title "Appbox ${tag#v}" --notes "See CHANGELOG.md for the changes in this release." \
+            || gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null
           gh release upload "$tag" --repo "$GITHUB_REPOSITORY" --clobber packaging/arch/appbox-*.pkg.tar.zst
+
+  deb:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build the packages
+        run: |
+          git rev-parse --verify "refs/tags/$TAG" >/dev/null
+          mkdir out
+          packaging/deb/build.sh amd64 "$TAG" out
+          packaging/deb/build.sh arm64 "$TAG" out
+          ls -l out
+      - name: Install and start the amd64 package
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb ./out/appbox_*_amd64.deb
+          xvfb-run -a appbox --version
+          status=0
+          timeout 20 xvfb-run -a appbox --hidden || status=$?
+          test "$status" -eq 124
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
+            || gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag \
+                 --title "Appbox ${TAG#v}" --notes "See CHANGELOG.md for the changes in this release." \
+            || gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber out/appbox_*.deb

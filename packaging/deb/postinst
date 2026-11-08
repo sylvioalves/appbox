@@ -1,0 +1,15 @@
+#!/bin/sh
+# Installs the AppArmor profile that lets the bundled Chromium create
+# its user namespace sandbox, when the running AppArmor accepts it.
+set -e
+
+if [ "$1" = configure ] && command -v apparmor_parser >/dev/null 2>&1; then
+  src=/usr/lib/appbox/apparmor-profile
+  dst=/etc/apparmor.d/appbox
+  if apparmor_parser --skip-kernel-load --debug "$src" >/dev/null 2>&1; then
+    cp -f "$src" "$dst"
+    if [ -d /sys/kernel/security/apparmor ] && ! { command -v ischroot >/dev/null 2>&1 && ischroot; }; then
+      apparmor_parser --replace --write-cache --skip-read-cache "$dst" || true
+    fi
+  fi
+fi

@@ -1,0 +1,10 @@
+# Allows the bundled Chromium to create user namespaces for its
+# sandbox on systems that restrict them, without confining Appbox.
+abi <abi/4.0>,
+include <tunables/global>
+
+profile appbox /usr/lib/appbox/electron/appbox flags=(unconfined) {
+  userns,
+
+  include if exists <local/appbox>
+}

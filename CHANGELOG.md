@@ -8,6 +8,13 @@ verifies.
 
 ## [Unreleased]
 
+### Added
+
+- A Debian package for amd64 and arm64 built by packaging/deb with
+  the Electron release of the Flatpak bundled, attached to every
+  GitHub release by the release workflow, which can also be started
+  by hand for an existing tag.
+
 ## [1.1.0] - 2026-11-07
 
 ### Added

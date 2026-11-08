@@ -37,7 +37,8 @@ for d in src/pages/*/; do
 done
 if [ -z "$bad" ]; then pass "pages"; else fail "pages:$bad"; fi
 
-if sh -n install.sh && sh -n bin/appbox && sh -n packaging/flatpak/appbox && sh -n scripts/check.sh; then
+if sh -n install.sh && sh -n bin/appbox && sh -n packaging/flatpak/appbox && sh -n scripts/check.sh \
+   && sh -n packaging/deb/build.sh && sh -n packaging/deb/postinst && sh -n packaging/deb/postrm; then
   pass "shell"
 else
   fail "shell"
