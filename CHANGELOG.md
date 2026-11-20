@@ -8,6 +8,8 @@ verifies.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-20
+
 ### Added
 
 - A Debian package for amd64 and arm64 built by packaging/deb with
@@ -51,6 +53,7 @@ First public release.
 - A user-level install script, an Arch Linux PKGBUILD and an
   AppStream metainfo file under the id io.github.sylvioalves.appbox.
 
-[Unreleased]: https://github.com/sylvioalves/appbox/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/sylvioalves/appbox/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/sylvioalves/appbox/releases/tag/v1.2.0
 [1.1.0]: https://github.com/sylvioalves/appbox/releases/tag/v1.1.0
 [1.0.0]: https://github.com/sylvioalves/appbox/releases/tag/v1.0.0
