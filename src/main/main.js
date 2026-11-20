@@ -18,6 +18,7 @@ const config = require('./config');
 const catalog = require('./catalog');
 const { ServiceView, stripUserAgent, resetPartition, openExternal } = require('./views');
 const { GhTracker, registerGhIpc, forgetToken } = require('../tracker/ghtrack');
+const { MarketBoard, registerMarketsIpc } = require('../markets/board');
 const profile = require('./profile');
 const { colors } = require('./theme');
 const { guard, guardOn } = require('./ipc');
@@ -931,6 +932,12 @@ function ensureAccount(svc) {
     tracker.on('data', () => send('gh:event', { type: 'data' }));
     accounts.set(svc.id, tracker);
     tracker.init();
+  } else if (svc.type === 'markets') {
+    const board = new MarketBoard(svc, builtinCtx);
+    board.on('status', (status) => send('mkt:event', { type: 'status', status }));
+    board.on('data', () => send('mkt:event', { type: 'data' }));
+    accounts.set(svc.id, board);
+    board.init();
   }
 }
 
@@ -1826,6 +1833,7 @@ function registerIpc() {
     return id;
   }));
   registerGhIpc(ipcMain, (e) => ownPage(e, 'github-tracker'), openExternal);
+  registerMarketsIpc(ipcMain, (e) => ownPage(e, 'markets'));
   registerPromptIpc(ipcMain);
   ipcMain.on('appbox:notify-close', guardOn(fromView, (v, id) => {
     const live = liveNotifications.get(id);

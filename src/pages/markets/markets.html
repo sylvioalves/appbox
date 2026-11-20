@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>Markets</title>
+  <link rel="stylesheet" href="markets.css">
+</head>
+<body>
+  <div id="app">
+    <header id="top">
+      <span id="brand">Markets</span>
+      <span class="spacer"></span>
+      <div class="mk-seg" id="currency" title="Display currency"></div>
+      <span id="status"></span>
+      <button class="tool" id="refresh" title="Refresh (R)">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      </button>
+    </header>
+    <div id="panes">
+      <nav id="nav" aria-label="Watchlist">
+        <div class="mk-head"><span>Watchlist</span><span class="spacer"></span><span>1D</span></div>
+        <div id="watch"></div>
+        <div id="add">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input id="add-q" type="text" placeholder="Add: AAPL, PETR4, bitcoin..." spellcheck="false" autocomplete="off">
+          <div id="results" hidden></div>
+        </div>
+      </nav>
+      <div id="splitter" title="Drag to resize"></div>
+      <main id="main">
+        <section id="detail" hidden>
+          <div class="mk-dhead">
+            <div class="mk-dinfo">
+              <div class="mk-dname"><span id="d-name"></span><span id="d-sym"></span></div>
+              <div class="mk-dmeta" id="d-meta"></div>
+              <div class="mk-dprice" id="d-price"></div>
+              <div class="mk-dchg" id="d-chg"></div>
+            </div>
+            <div class="mk-seg" id="ranges"></div>
+          </div>
+          <div id="chart"></div>
+          <div class="mk-stats" id="stats"></div>
+        </section>
+        <div id="empty" hidden>Search below the watchlist to add a stock, fund, index, currency or crypto.</div>
+      </main>
+    </div>
+  </div>
+  <div id="toast" hidden></div>
+  <script src="markets.js"></script>
+</body>
+</html>

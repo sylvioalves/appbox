@@ -14,6 +14,10 @@ verifies.
   the Electron release of the Flatpak bundled, attached to every
   GitHub release by the release workflow, which can also be started
   by hand for an existing tag.
+- A Markets app with a watchlist of stocks, funds, indices,
+  currencies and crypto from Yahoo Finance: sparklines, a 1D to 5Y
+  chart with hover and drag to measure, and prices in their own
+  currency or converted to BRL, USD or EUR.
 
 ## [1.1.0] - 2026-11-07
 

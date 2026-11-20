@@ -34,13 +34,14 @@ for a web app, which bridges `Notification` to the main process, or
 the page preload of a built-in type. `setupSession()` runs once per
 partition and installs the permission, display capture and download
 handlers. A view loads `svc.url`, or for the type `github-tracker`
-the page `gh.html`.
+the page `gh.html` and for the type `markets` the page
+`markets.html`.
 
 ## Built-in pages
 
 Each page lives in `src/pages/<page>/` as `<page>.html`, `<page>.js`,
 an optional `<page>.css` and a `preload.js`: `sidebar`, `menu`,
-`props`, `add`, `settings`, `welcome`, `prompt` and `gh`. A
+`props`, `add`, `settings`, `welcome`, `prompt`, `gh` and `markets`. A
 page runs sandboxed with context isolation and no Node integration,
 and its preload exposes one small object through `contextBridge`
 whose methods map to `ipcRenderer.invoke`, `send` and `on`.
@@ -62,9 +63,11 @@ Channel names carry the page or subsystem as prefix: `appbox:*` for
 the sidebar, the menu, the welcome page, the properties dialog
 (`appbox:props-*`) and the notifications of the app views,
 `settings:*`, `add:*` and `prompt:*` for the dialogs, `gh:*` for the
-tracker, and `menu:open` for the data pushed to
-the context menu view. Updates from the main process arrive as
-`appbox:update`, `appbox:status` and `gh:event`.
+tracker, `mkt:*` for the markets page, and `menu:open` for the data
+pushed to the context menu view. Updates from the main process
+arrive as `appbox:update`, `appbox:status`, `gh:event` and
+`mkt:event`. The markets page is reached through `ownPage()` like the
+tracker.
 
 ## Accounts
 
@@ -77,6 +80,16 @@ snapshot the page renders. The `ctx` built in `main.js` offers `onBadge(id, n)`,
 `onProgress(id, p)`, `patch(id, patch)`, `notify({ title, body,
 onClick })` and `activate(id)`. The events `status` and `data` of
 the tracker are forwarded to the page as `gh:event`.
+
+`MarketBoard` in `src/markets/board.js` has the same shape for the
+type `markets`: `init()` loads the watchlist and the last quotes from
+`markets/<id>.json` and starts polling, `stop()` clears the timer.
+It fetches one Yahoo Finance chart per symbol and range over HTTPS,
+at most four at a time, keeps each range in memory for a time that
+grows with the range, and converts prices to the display currency
+with the exchange rate series of the same range. The page reports
+its visibility with `mkt:active`, which sets the polling interval.
+Its `status` and `data` events reach the page as `mkt:event`.
 
 ## Command line
 
@@ -108,7 +121,7 @@ start before any window exists.
   overrides it). The autostart entry is written to
   `$XDG_CONFIG_HOME/autostart/io.github.sylvioalves.appbox.desktop`.
 - `$XDG_STATE_HOME/appbox`: `state.json`, the keyring-encrypted
-  `gh-tokens.json` and `gh/<id>.json`.
+  `gh-tokens.json`, `gh/<id>.json` and `markets/<id>.json`.
 - `$XDG_DATA_HOME/appbox`: Electron's `userData` and `sessionData`,
   with one Chromium profile per partition under `Partitions/`.
 - `$XDG_CACHE_HOME/appbox`: the Node compile cache, the export

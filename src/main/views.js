@@ -10,6 +10,7 @@ const PRELOAD = path.join(__dirname, 'preload-service.js');
 const PAGES = path.join(__dirname, '..', 'pages');
 const BUILTIN = {
   'github-tracker': { preload: path.join(PAGES, 'gh', 'preload.js'), page: path.join(PAGES, 'gh', 'gh.html') },
+  markets: { preload: path.join(PAGES, 'markets', 'preload.js'), page: path.join(PAGES, 'markets', 'markets.html') },
 };
 const BADGE_RE = /\((\d+)\)/;
 const LEAVE_MIN_MS = 1000;

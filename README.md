@@ -25,7 +25,8 @@ from a bundled runtime.
   session on purpose, and a window opened for an outside link shares
   the session of the app it came from.
 - Add apps from a catalog (Teams, Outlook, Gmail, WhatsApp, Telegram,
-  Discord, Slack, Element, Mattermost, GH Tracker) or by address, and
+  Discord, Slack, Element, Mattermost, GH Tracker, Markets) or by
+  address, and
   remove them again with their login data.
 - Sidebar with app icons, unread badges, drag to reorder, and a
   right-click menu with a live snapshot of the app.
@@ -37,6 +38,8 @@ from a bundled runtime.
 - GitHub tracker: the pull requests you review, are assigned to or
   author in the repositories you name, with a "My turn" list and saved
   searches of your own.
+- Markets: a watchlist of stocks, funds, indices, currencies and
+  crypto with a 1D to 5Y chart.
 - Dark, light or system theme for the shell and the built-in apps.
 - Profile export and import, with the app sessions encrypted under a
   passphrase.
@@ -230,6 +233,23 @@ the other lists and never rings the badge or a notification.
 The user and the repositories can be changed in the app properties,
 which also forget the stored token.
 
+## Markets
+
+The Markets app keeps a watchlist of stocks, funds, indices,
+currencies and crypto, read from the public Yahoo Finance chart API
+without an account. Type a name or ticker in the box under the list
+to add one, drag a row to reorder it. Each row shows the price, the
+change since the previous close (the last 24 hours for crypto) and a
+sparkline. The chart covers 1D, 1W, 1M, 1Y or 5Y, keys 1 to 5: the
+day chart spans the whole trading session, the longer ranges skip
+nights and weekends. Hover to read a point, drag to measure the
+change between two points. Prices are shown in their own currency or
+converted to BRL, USD or EUR at the rate of each point in time.
+Quotes refresh every minute while the page is visible and a market
+is open, every five minutes when all are closed and every half hour
+in the background. An optional `"symbols"` array in the service entry
+sets the first watchlist.
+
 ## Configuration
 
 The list of apps lives in `~/.config/appbox/services.json`. The app
@@ -237,13 +257,14 @@ writes it when you add, change or remove an app, and it can also be
 edited by hand. Each entry has an `id`, `name`, `url`, a list of
 allowed `hosts` (navigation elsewhere opens outside), the browser
 `permissions` it may use, and the options shown in the properties
-window. Set `"type": "github-tracker"` for the GitHub tracker. The catalog entries
+window. Set `"type": "github-tracker"` for the GitHub tracker and
+`"type": "markets"` for the market watchlist. The catalog entries
 are in `src/main/catalog.json`.
 
 | Path | Content |
 |------|---------|
 | `~/.config/appbox/services.json` | Apps and global settings |
-| `~/.local/state/appbox/` | Window state, tracker state, encrypted GitHub token |
+| `~/.local/state/appbox/` | Window state, tracker and watchlist state, encrypted GitHub token |
 | `~/.local/share/appbox/Partitions/` | One Chromium profile per app |
 
 The `XDG_CONFIG_HOME`, `XDG_STATE_HOME` and `XDG_DATA_HOME` variables
@@ -347,6 +368,7 @@ step and no dependencies beyond Electron:
 | `src/main/portal.js` | D-Bus client for the Background portal inside the Flatpak sandbox |
 | `src/main/preload-service.js` | Preload injected into every web app |
 | `src/tracker/ghtrack.js` | The GitHub tracker |
+| `src/markets/board.js` | Quotes and charts behind the Markets page |
 | `src/pages/<page>/` | Each built-in page: html, js, css and its `preload.js` |
 | `src/pages/dialog.css` | Styles shared by the dialog pages |
 | `assets/` | Icons and the banner |

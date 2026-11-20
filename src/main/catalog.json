@@ -211,6 +211,15 @@
       "icon": "gh-tracker.svg"
     },
     {
+      "id": "markets",
+      "name": "Markets",
+      "description": "A watchlist of stocks, funds, indices, currencies and crypto with charts, from Yahoo Finance",
+      "type": "markets",
+      "url": "https://finance.yahoo.com/",
+      "color": "#188038",
+      "icon": "markets.svg"
+    },
+    {
       "id": "custom",
       "name": "Custom app",
       "description": "Any web app by address",
