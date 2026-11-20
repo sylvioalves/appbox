@@ -19,6 +19,12 @@ verifies.
   chart with hover and drag to measure, and prices in their own
   currency or converted to BRL, USD or EUR.
 
+### Fixed
+
+- Apps fill the whole window when Appbox starts maximized on
+  Wayland. The views now follow the size of the window content
+  instead of the window events, which arrive before the new size.
+
 ## [1.1.0] - 2026-11-07
 
 ### Added

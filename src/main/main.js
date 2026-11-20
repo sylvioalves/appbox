@@ -368,7 +368,7 @@ function debounceSaveState() {
 }
 
 function viewBounds() {
-  const [width, height] = win.getContentSize();
+  const { width, height } = win.contentView.getBounds();
   const x = cfg.settings.sidebarWidth;
   return {
     x,
@@ -1499,7 +1499,7 @@ async function showMenu(id, header, items, x, y, anchor, width = MENU_W, focus =
   await menuReady;
   const seps = items.filter((it, i) => it.sep || (i > 0 && it.type === 'action' && items[i - 1].type === 'toggle')).length;
   const height = MENU_HEAD + items.length * MENU_ITEM + seps * 9 + 14;
-  const [, winH] = win.getContentSize();
+  const winH = win.contentView.getBounds().height;
   const view = ensureMenuView();
   raiseMenu();
   const top = anchor === 'up' ? y - height - 6 : y - 10;
@@ -1601,10 +1601,11 @@ function createWindow() {
   };
   for (const ev of ['resize', 'move', 'maximize', 'unmaximize', 'enter-full-screen', 'leave-full-screen']) {
     win.on(ev, () => {
-      layout();
+      closeServiceMenu();
       saveBounds();
     });
   }
+  win.contentView.on('bounds-changed', layout);
   win.on('close', (e) => {
     if (!quitting) {
       e.preventDefault();
