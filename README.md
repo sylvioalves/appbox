@@ -238,17 +238,18 @@ which also forget the stored token.
 The Markets app keeps a watchlist of stocks, funds, indices,
 currencies and crypto, read from the public Yahoo Finance chart API
 without an account. Type a name or ticker in the box under the list
-to add one, drag a row to reorder it. Each row shows the price, the
-change since the previous close (the last 24 hours for crypto) and a
-sparkline. The chart covers 1D, 1W, 1M, 1Y or 5Y, keys 1 to 5: the
-day chart spans the whole trading session, the longer ranges skip
-nights and weekends. Hover to read a point, drag to measure the
-change between two points. Prices are shown in their own currency or
-converted to BRL, USD or EUR at the rate of each point in time.
-Quotes refresh every minute while the page is visible and a market
-is open, every five minutes when all are closed and every half hour
-in the background. An optional `"symbols"` array in the service entry
-sets the first watchlist.
+to add one, drag a row to reorder it, and right-click it to remove
+it, move it to the top or open it on Yahoo Finance. Each row shows
+the price, the change since the previous close (the last 24 hours for
+crypto) and a sparkline. The chart covers 1D, 1W, 1M, 1Y or 5Y, keys
+1 to 5: the day chart spans the whole trading session, the longer
+ranges skip nights and weekends. Hover to read a point, drag to
+measure the change between two points. Prices are shown in their own
+currency or converted to BRL, USD or EUR at the rate of each point in
+time. Quotes refresh every minute while the page is visible and a
+market is open, every five minutes when all are closed and every half
+hour in the background. An optional `"symbols"` array in the service
+entry sets the first watchlist.
 
 ## Configuration
 

@@ -16,7 +16,7 @@ for (const name of ['CONFIG', 'DATA', 'STATE', 'CACHE']) {
 delete process.env.APPBOX_CONFIG;
 const config = require('../src/main/config.js');
 const catalog = require('../src/main/catalog.js');
-const { MarketBoard, thin, rateAt, marketState, major, SYMBOL_RE, LIST_MAX } = require('../src/markets/board.js');
+const { MarketBoard, thin, rateAt, marketState, major, quoteUrl, SYMBOL_RE, LIST_MAX } = require('../src/markets/board.js');
 
 test.after(() => fs.rmSync(root, { recursive: true, force: true }));
 
@@ -62,6 +62,11 @@ test('minor currency units become the major unit', () => {
   assert.deepEqual(major('GBp'), { currency: 'GBP', k: 0.01 });
   assert.deepEqual(major('USD'), { currency: 'USD', k: 1 });
   assert.deepEqual(major(undefined), { currency: 'USD', k: 1 });
+});
+
+test('the quote page address escapes the symbol', () => {
+  assert.equal(quoteUrl('PETR4.SA'), 'https://finance.yahoo.com/quote/PETR4.SA/');
+  assert.equal(quoteUrl('^BVSP'), 'https://finance.yahoo.com/quote/%5EBVSP/');
 });
 
 test('symbols are limited to ticker characters', () => {

@@ -538,7 +538,11 @@ class MarketBoard extends EventEmitter {
   }
 }
 
-function registerMarketsIpc(ipcMain, boardFor) {
+function quoteUrl(sym) {
+  return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}/`;
+}
+
+function registerMarketsIpc(ipcMain, boardFor, openExternal) {
   ipcMain.handle('mkt:data', guard(boardFor, (b) => b.data()));
   ipcMain.handle('mkt:chart', guard(boardFor, (b, sym, rk) => b.chart(String(sym), String(rk))));
   ipcMain.handle('mkt:search', guard(boardFor, (b, text) => b.search(String(text).slice(0, 100))));
@@ -551,6 +555,11 @@ function registerMarketsIpc(ipcMain, boardFor) {
     return b.status();
   }));
   ipcMain.on('mkt:active', guardOn(boardFor, (b, on) => b.setActive(on)));
+  ipcMain.on('mkt:open', guardOn(boardFor, (b, sym) => {
+    if (b.state.list.includes(String(sym))) {
+      openExternal(quoteUrl(String(sym)));
+    }
+  }));
 }
 
-module.exports = { MarketBoard, registerMarketsIpc, thin, rateAt, marketState, major, SYMBOL_RE, LIST_MAX };
+module.exports = { MarketBoard, registerMarketsIpc, thin, rateAt, marketState, major, quoteUrl, SYMBOL_RE, LIST_MAX };

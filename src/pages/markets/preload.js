@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('markets', {
   currency: (cur) => ipcRenderer.invoke('mkt:currency', cur),
   refresh: () => ipcRenderer.invoke('mkt:refresh'),
   active: (on) => ipcRenderer.send('mkt:active', on),
+  open: (sym) => ipcRenderer.send('mkt:open', sym),
   onEvent: (cb) => ipcRenderer.on('mkt:event', (e, data) => cb(data)),
 });

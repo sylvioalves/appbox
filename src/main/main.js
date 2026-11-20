@@ -1834,7 +1834,7 @@ function registerIpc() {
     return id;
   }));
   registerGhIpc(ipcMain, (e) => ownPage(e, 'github-tracker'), openExternal);
-  registerMarketsIpc(ipcMain, (e) => ownPage(e, 'markets'));
+  registerMarketsIpc(ipcMain, (e) => ownPage(e, 'markets'), openExternal);
   registerPromptIpc(ipcMain);
   ipcMain.on('appbox:notify-close', guardOn(fromView, (v, id) => {
     const live = liveNotifications.get(id);

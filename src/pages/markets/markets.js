@@ -23,6 +23,7 @@ let results = [];
 let resIdx = 0;
 let searchSeq = 0;
 let dragSym = null;
+let menuSym = null;
 
 function store(key, fallback) {
   try {
@@ -544,10 +545,10 @@ function renderWatch() {
   const box = $('watch');
   box.textContent = '';
   for (const q of data.list) {
-    const row = el('div', `mk-row${q.symbol === sel ? ' sel' : ''}${q.pending ? ' pending' : ''}`);
+    const row = el('div', `mk-row${q.symbol === sel ? ' sel' : ''}${q.pending ? ' pending' : ''}${q.symbol === menuSym ? ' menu' : ''}`);
     row.draggable = true;
     row.dataset.sym = q.symbol;
-    const left = el('div');
+    const left = el('div', 'mk-who');
     left.append(el('div', 'mk-sym', short(q.symbol)), el('div', 'mk-nm', q.name || q.symbol));
     const spark = el('div');
     spark.innerHTML = q.pending ? '' : sparkSvg(q);
@@ -557,15 +558,12 @@ function renderWatch() {
     if (ch) {
       right.append(el('span', `mk-pill ${ch.abs >= 0 ? 'mk-up' : 'mk-down'}`, pct(ch.pct)));
     }
-    const x = el('button', 'tool small mk-x');
-    x.title = 'Remove from watchlist';
-    x.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
-    x.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      remove(q.symbol);
-    });
-    row.append(left, spark, right, x);
+    row.append(left, spark, right);
     row.addEventListener('click', () => select(q.symbol));
+    row.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
+      openMenu(q.symbol, row, ev.clientX, ev.clientY);
+    });
     row.addEventListener('dragstart', (ev) => {
       dragSym = q.symbol;
       ev.dataTransfer.effectAllowed = 'move';
@@ -602,6 +600,61 @@ function renderWatch() {
     box.append(row);
   }
 }
+
+function closeMenu() {
+  const m = $('ctx');
+  if (m.hidden) {
+    return;
+  }
+  m.hidden = true;
+  menuSym = null;
+  for (const r of document.querySelectorAll('.mk-row.menu')) {
+    r.classList.remove('menu');
+  }
+}
+
+function openMenu(sym, row, x, y) {
+  closeMenu();
+  const m = $('ctx');
+  m.textContent = '';
+  const items = [
+    ['Remove from watchlist', 'Del', () => remove(sym)],
+    ['Move to top', '', () => window.markets.move(sym, 0)],
+    null,
+    ['Open on Yahoo Finance', '', () => window.markets.open(sym)],
+  ];
+  for (const it of items) {
+    if (!it) {
+      m.append(el('hr'));
+      continue;
+    }
+    const b = el('button', '', it[0]);
+    b.setAttribute('role', 'menuitem');
+    if (it[1]) {
+      b.append(el('span', '', it[1]));
+    }
+    b.addEventListener('click', () => {
+      closeMenu();
+      it[2]();
+    });
+    m.append(b);
+  }
+  menuSym = sym;
+  row.classList.add('menu');
+  m.hidden = false;
+  const r = m.getBoundingClientRect();
+  m.style.left = `${Math.max(4, Math.min(x, window.innerWidth - r.width - 4))}px`;
+  m.style.top = `${Math.max(4, Math.min(y, window.innerHeight - r.height - 4))}px`;
+  m.querySelector('button').focus();
+}
+
+document.addEventListener('pointerdown', (ev) => {
+  if (!$('ctx').contains(ev.target)) {
+    closeMenu();
+  }
+});
+window.addEventListener('blur', closeMenu);
+$('watch').addEventListener('scroll', closeMenu);
 
 function clearDrop() {
   for (const r of document.querySelectorAll('.drop-before, .drop-after')) {
@@ -879,6 +932,18 @@ $('add-q').addEventListener('blur', () => setTimeout(closeResults, 100));
 /* ---- keyboard, refresh, splitter ---- */
 
 document.addEventListener('keydown', (ev) => {
+  if (!$('ctx').hidden) {
+    const items = [...$('ctx').querySelectorAll('button')];
+    const i = items.indexOf(document.activeElement);
+    if (ev.key === 'Escape') {
+      ev.preventDefault();
+      closeMenu();
+    } else if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+      ev.preventDefault();
+      items[(i + (ev.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length].focus();
+    }
+    return;
+  }
   if ((ev.target instanceof Element && ev.target.closest('input')) || ev.ctrlKey || ev.altKey || ev.metaKey) {
     return;
   }
